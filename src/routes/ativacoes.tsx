@@ -46,7 +46,7 @@ function PendingActivations() {
   ) : [];
 
   return (
-    <Layout title="Ativações Pendentes">
+    <Layout title="Aguardando Aprovação">
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="relative flex-1 max-w-md">
@@ -79,13 +79,13 @@ function PendingActivations() {
                   <th className="px-6 py-4">Código</th>
                   <th className="px-6 py-4">Dispositivo</th>
                   <th className="px-6 py-4">Solicitação</th>
-                  <th className="px-6 py-4">Expira em</th>
+                  <th className="px-6 py-4">Status da Validade</th>
                   <th className="px-6 py-4 text-right">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {filteredActivations.map((item: any) => {
-                  const minsRemaining = differenceInMinutes(parseISO(item.expires_at), new Date());
+                  const isPermanent = !item.expires_at;
                   return (
                     <tr 
                       key={item.id} 
@@ -108,10 +108,10 @@ function PendingActivations() {
                       </td>
                       <td className="px-6 py-4">
                         <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${
-                          minsRemaining < 5 ? 'bg-red-100 text-red-800 animate-pulse border border-red-200' : 'bg-yellow-100 text-yellow-800 border border-yellow-200'
+                          isPermanent ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-yellow-100 text-yellow-800 border border-yellow-200'
                         }`}>
-                          <Clock size={12} className="mr-1.5" />
-                          {minsRemaining} min
+                          <ShieldCheck size={12} className="mr-1.5" />
+                          {isPermanent ? "Código sem vencimento" : "Vence em breve"}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
