@@ -126,10 +126,12 @@ export const activateDeviceAction = createServerFn({ method: "POST" })
     if (linkErr) throw linkErr;
 
     // 5. Mark code as used
-    await supabaseAdmin
-      .from("codigos_ativacao")
-      .update({ used_at: new Date().toISOString() })
-      .eq("id", targetCodeId);
+    if (targetCodeId) {
+      await supabaseAdmin
+        .from("codigos_ativacao")
+        .update({ used_at: new Date().toISOString() })
+        .eq("id", targetCodeId);
+    }
 
     // 6. Register history
     await supabaseAdmin

@@ -5,11 +5,13 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Layout } from "@/components/layout/Layout";
-import { Users, Monitor, Clock, Calendar, ShieldAlert, List, Loader2, History } from "lucide-react";
+import { Users, Monitor, Clock, Calendar, ShieldAlert, List, Loader2, History, Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getDashboardStats } from "@/lib/dashboard.functions";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
+import { ActivationModal } from "@/components/ActivationModal";
 
 export const Route = createFileRoute("/")({
   beforeLoad: async () => {
@@ -25,6 +27,7 @@ export const Route = createFileRoute("/")({
 
 
 function Dashboard() {
+  const [isActivationModalOpen, setIsActivationModalOpen] = useState(false);
   const getStatsFn = useServerFn(getDashboardStats);
 
   const { data, isLoading } = useQuery({
@@ -98,10 +101,13 @@ function Dashboard() {
             <div className="bg-card p-6 rounded-xl border border-border shadow-sm">
               <h3 className="text-lg font-semibold mb-4">Ações Rápidas</h3>
               <div className="grid grid-cols-2 gap-4">
-                <a href="/ativacoes" className="p-4 rounded-lg bg-primary/10 border border-primary/20 hover:bg-primary/20 transition-colors text-center">
-                  <Clock className="mx-auto mb-2 text-primary" size={24} />
+                <button 
+                  onClick={() => setIsActivationModalOpen(true)}
+                  className="p-4 rounded-lg bg-primary/10 border border-primary/20 hover:bg-primary/20 transition-colors text-center"
+                >
+                  <Plus className="mx-auto mb-2 text-primary" size={24} />
                   <span className="text-xs font-bold text-primary uppercase">Ativar Novo</span>
-                </a>
+                </button>
                 <a href="/clientes" className="p-4 rounded-lg bg-green-50 border border-green-200 hover:bg-green-100 transition-colors text-center">
                   <Users className="mx-auto mb-2 text-green-600" size={24} />
                   <span className="text-xs font-bold text-green-600 uppercase">Novo Cliente</span>
@@ -119,6 +125,11 @@ function Dashboard() {
           </div>
         </>
       )}
+
+      <ActivationModal 
+        isOpen={isActivationModalOpen}
+        onClose={() => setIsActivationModalOpen(false)}
+      />
     </Layout>
   );
 }
