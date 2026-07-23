@@ -14,7 +14,7 @@ const clientSchema = z.object({
   telefone: z.string().optional(),
   observacao: z.string().optional(),
   vencimento: z.string().optional(),
-  status: z.string().default("ativo"),
+  status: z.string().min(1, "Status é obrigatório"),
 });
 
 type ClientFormData = z.infer<typeof clientSchema>;

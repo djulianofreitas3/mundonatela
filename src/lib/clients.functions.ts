@@ -17,14 +17,14 @@ export const getClients = createServerFn({ method: "GET" })
   });
 
 export const createClient = createServerFn({ method: "POST" })
-  .input(
+  .validator((data: unknown) => 
     z.object({
       nome: z.string().min(1, "Nome é obrigatório"),
       telefone: z.string().optional(),
       observacao: z.string().optional(),
       status: z.string().default("ativo"),
       vencimento: z.string().optional(),
-    })
+    }).parse(data)
   )
   .handler(async ({ data: input }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -39,7 +39,7 @@ export const createClient = createServerFn({ method: "POST" })
   });
 
 export const updateClient = createServerFn({ method: "POST" })
-  .input(
+  .validator((data: unknown) => 
     z.object({
       id: z.string().uuid(),
       nome: z.string().optional(),
@@ -47,7 +47,7 @@ export const updateClient = createServerFn({ method: "POST" })
       observacao: z.string().optional(),
       status: z.string().optional(),
       vencimento: z.string().optional(),
-    })
+    }).parse(data)
   )
   .handler(async ({ data: { id, ...input } }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -63,7 +63,7 @@ export const updateClient = createServerFn({ method: "POST" })
   });
 
 export const deleteClient = createServerFn({ method: "POST" })
-  .input(z.string().uuid())
+  .validator((data: unknown) => z.string().uuid().parse(data))
   .handler(async ({ data: id }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.from("clientes").delete().eq("id", id);

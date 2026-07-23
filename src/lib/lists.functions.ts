@@ -17,7 +17,7 @@ export const getLists = createServerFn({ method: "GET" })
   });
 
 export const createList = createServerFn({ method: "POST" })
-  .input(
+  .validator((data: unknown) => 
     z.object({
       nome: z.string().min(1, "Nome é obrigatório"),
       url: z.string().url("URL inválida"),
@@ -26,7 +26,7 @@ export const createList = createServerFn({ method: "POST" })
       status: z.string().default("ativo"),
       vencimento: z.string().optional(),
       cliente_id: z.string().uuid().optional(),
-    })
+    }).parse(data)
   )
   .handler(async ({ data: input }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -48,12 +48,12 @@ export const createList = createServerFn({ method: "POST" })
   });
 
 export const testXtreamConnection = createServerFn({ method: "POST" })
-  .input(
+  .validator((data: unknown) => 
     z.object({
       url: z.string().url(),
       username: z.string(),
       password: z.string(),
-    })
+    }).parse(data)
   )
   .handler(async ({ data: { url, username, password } }) => {
     try {
