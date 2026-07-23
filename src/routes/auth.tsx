@@ -11,13 +11,11 @@ export const Route = createFileRoute("/auth")({
   component: Auth,
 });
 
-
 function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { toast } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,18 +29,10 @@ function Auth() {
 
       if (error) throw error;
 
-      toast({
-        title: "Sucesso",
-        description: "Bem-vindo de volta!",
-      });
-
+      toast.success("Bem-vindo de volta!");
       navigate({ to: "/" });
     } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Erro no login",
-        description: error.message || "Credenciais inválidas",
-      });
+      toast.error(error.message || "Credenciais inválidas");
     } finally {
       setLoading(false);
     }
@@ -107,4 +97,3 @@ function Auth() {
     </div>
   );
 }
-
