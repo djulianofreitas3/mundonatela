@@ -1,8 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Layout } from "@/components/layout/Layout";
 import { useState } from "react";
-import { Search, Plus, MoreVertical, Trash2, Edit2, Link as LinkIcon, Globe, User, ShieldCheck, ShieldX, Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { Search, Plus, MoreVertical, Trash2, Edit2, Globe, User, Loader2, CheckCircle2, XCircle } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getLists, createList, testXtreamConnection } from "@/lib/lists.functions";
 import { getClients } from "@/lib/clients.functions";
@@ -10,6 +10,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { format } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const listSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -17,13 +19,21 @@ const listSchema = z.object({
   usuario: z.string().min(1, "Usuário é obrigatório"),
   senha: z.string().min(1, "Senha é obrigatória"),
   status: z.string().min(1, "Status é obrigatório"),
-  cliente_id: z.string().uuid().optional(),
+  cliente_id: z.string().uuid().optional().or(z.literal("")),
   vencimento: z.string().optional(),
 });
 
 type ListFormData = z.infer<typeof listSchema>;
 
 export const Route = createFileRoute("/listas")({
+  beforeLoad: async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      throw redirect({
+        to: "/auth",
+      });
+    }
+  },
   component: Lists,
 });
 
@@ -50,7 +60,7 @@ function Lists() {
     queryFn: () => getClientsFn(),
   });
 
-  const { register, handleSubmit, reset, formState: { errors }, watch } = useForm<ListFormData>({
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<ListFormData>({
     resolver: zodResolver(listSchema),
     defaultValues: { status: "ativo" }
   });
@@ -67,13 +77,20 @@ function Lists() {
     onError: (err: any) => {
       toast.error(`Falha ao salvar lista: ${err.message}`);
     }
-
   });
 
   const testMutation = useMutation({
     mutationFn: (data: any) => testConnectionFn({ data }),
     onSuccess: (result) => {
       setTestResult(result);
+      if (result.success) {
+        toast.success("Conexão estabelecida com sucesso!");
+      } else {
+        toast.warning(result.message);
+      }
+    },
+    onError: (err: any) => {
+      toast.error(`Erro no teste: ${err.message}`);
     },
     onSettled: () => {
       setTestingId(null);
@@ -91,7 +108,12 @@ function Lists() {
   };
 
   const onSubmit = (data: ListFormData) => {
-    createMutation.mutate(data);
+    // Convert empty string to null for optional UUID
+    const payload = {
+      ...data,
+      cliente_id: data.cliente_id === "" ? undefined : data.cliente_id
+    };
+    createMutation.mutate(payload as any);
   };
 
   const filteredLists = Array.isArray(lists) ? lists.filter((l: any) => 
@@ -184,9 +206,6 @@ function Lists() {
                           <MoreVertical size={18} />
                         </button>
                       </div>
-                      {testingId === list.id && (
-                        <div className="absolute mt-1 text-[10px] text-primary animate-pulse">Testando...</div>
-                      )}
                     </td>
                   </tr>
                 ))}
@@ -199,7 +218,6 @@ function Lists() {
         </div>
       )}
 
-      {/* Connection Test Overlay Notification */}
       {testResult && (
         <div className="fixed bottom-4 right-4 z-[100] bg-card border border-border shadow-2xl rounded-lg p-4 max-w-sm animate-in fade-in slide-in-from-bottom-4">
           <div className="flex items-start gap-3">
