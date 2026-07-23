@@ -1,15 +1,26 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Layout } from "@/components/layout/Layout";
 import { useState } from "react";
-import { Search, Monitor, User, Calendar, ShieldCheck, ShieldX, RefreshCw, Unlink, Loader2, Info, Check, X, Clock } from "lucide-react";
+import { Search, Monitor, Calendar, ShieldCheck, ShieldX, RefreshCw, Unlink, Loader2, Clock } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getDevices, updateDevice } from "@/lib/devices.functions";
 import { format } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/dispositivos")({
+  beforeLoad: async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      throw redirect({
+        to: "/auth",
+      });
+    }
+  },
   component: Devices,
 });
+
 
 function Devices() {
   const [search, setSearch] = useState("");
@@ -27,8 +38,14 @@ function Devices() {
     mutationFn: (data: any) => updateDeviceFn({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["devices"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
+      toast.success("Dispositivo atualizado!");
     },
+    onError: (err: any) => {
+      toast.error(`Falha ao atualizar: ${err.message}`);
+    }
   });
+
 
   const filteredDevices = Array.isArray(devices) ? devices.filter((d: any) => 
     (d.device_name?.toLowerCase().includes(search.toLowerCase())) ||
