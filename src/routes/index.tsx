@@ -1,4 +1,7 @@
-// quais dados eu tenho que colocar ali para acessar o painel, poderia me passar, ou se tenho que criar dados para eu poder acessar
+// Credenciais Administrativas Iniciais:
+// E-mail: admin@mundonatela.com
+// Senha: admin123456
+
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Layout } from "@/components/layout/Layout";
