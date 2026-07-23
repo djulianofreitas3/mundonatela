@@ -10,91 +10,33 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiPublicDeviceRegisterRouteImport } from './routes/api/public/device/register'
-import { Route as ApiPublicDeviceHeartbeatRouteImport } from './routes/api/public/device/heartbeat'
-import { Route as ApiPublicDeviceConfigRouteImport } from './routes/api/public/device/config'
-import { Route as ApiPublicDeviceCheckActivationRouteImport } from './routes/api/public/device/check-activation'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicDeviceRegisterRoute = ApiPublicDeviceRegisterRouteImport.update({
-  id: '/api/public/device/register',
-  path: '/api/public/device/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicDeviceHeartbeatRoute =
-  ApiPublicDeviceHeartbeatRouteImport.update({
-    id: '/api/public/device/heartbeat',
-    path: '/api/public/device/heartbeat',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicDeviceConfigRoute = ApiPublicDeviceConfigRouteImport.update({
-  id: '/api/public/device/config',
-  path: '/api/public/device/config',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicDeviceCheckActivationRoute =
-  ApiPublicDeviceCheckActivationRouteImport.update({
-    id: '/api/public/device/check-activation',
-    path: '/api/public/device/check-activation',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/api/public/device/check-activation': typeof ApiPublicDeviceCheckActivationRoute
-  '/api/public/device/config': typeof ApiPublicDeviceConfigRoute
-  '/api/public/device/heartbeat': typeof ApiPublicDeviceHeartbeatRoute
-  '/api/public/device/register': typeof ApiPublicDeviceRegisterRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/api/public/device/check-activation': typeof ApiPublicDeviceCheckActivationRoute
-  '/api/public/device/config': typeof ApiPublicDeviceConfigRoute
-  '/api/public/device/heartbeat': typeof ApiPublicDeviceHeartbeatRoute
-  '/api/public/device/register': typeof ApiPublicDeviceRegisterRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/api/public/device/check-activation': typeof ApiPublicDeviceCheckActivationRoute
-  '/api/public/device/config': typeof ApiPublicDeviceConfigRoute
-  '/api/public/device/heartbeat': typeof ApiPublicDeviceHeartbeatRoute
-  '/api/public/device/register': typeof ApiPublicDeviceRegisterRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/api/public/device/check-activation'
-    | '/api/public/device/config'
-    | '/api/public/device/heartbeat'
-    | '/api/public/device/register'
+  fullPaths: '/'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/api/public/device/check-activation'
-    | '/api/public/device/config'
-    | '/api/public/device/heartbeat'
-    | '/api/public/device/register'
-  id:
-    | '__root__'
-    | '/'
-    | '/api/public/device/check-activation'
-    | '/api/public/device/config'
-    | '/api/public/device/heartbeat'
-    | '/api/public/device/register'
+  to: '/'
+  id: '__root__' | '/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ApiPublicDeviceCheckActivationRoute: typeof ApiPublicDeviceCheckActivationRoute
-  ApiPublicDeviceConfigRoute: typeof ApiPublicDeviceConfigRoute
-  ApiPublicDeviceHeartbeatRoute: typeof ApiPublicDeviceHeartbeatRoute
-  ApiPublicDeviceRegisterRoute: typeof ApiPublicDeviceRegisterRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -106,43 +48,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/device/register': {
-      id: '/api/public/device/register'
-      path: '/api/public/device/register'
-      fullPath: '/api/public/device/register'
-      preLoaderRoute: typeof ApiPublicDeviceRegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/device/heartbeat': {
-      id: '/api/public/device/heartbeat'
-      path: '/api/public/device/heartbeat'
-      fullPath: '/api/public/device/heartbeat'
-      preLoaderRoute: typeof ApiPublicDeviceHeartbeatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/device/config': {
-      id: '/api/public/device/config'
-      path: '/api/public/device/config'
-      fullPath: '/api/public/device/config'
-      preLoaderRoute: typeof ApiPublicDeviceConfigRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/device/check-activation': {
-      id: '/api/public/device/check-activation'
-      path: '/api/public/device/check-activation'
-      fullPath: '/api/public/device/check-activation'
-      preLoaderRoute: typeof ApiPublicDeviceCheckActivationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ApiPublicDeviceCheckActivationRoute: ApiPublicDeviceCheckActivationRoute,
-  ApiPublicDeviceConfigRoute: ApiPublicDeviceConfigRoute,
-  ApiPublicDeviceHeartbeatRoute: ApiPublicDeviceHeartbeatRoute,
-  ApiPublicDeviceRegisterRoute: ApiPublicDeviceRegisterRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
