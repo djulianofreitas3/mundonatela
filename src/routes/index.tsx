@@ -1,14 +1,24 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Layout } from "@/components/layout/Layout";
 import { Users, Monitor, Clock, Calendar, ShieldAlert, List, Loader2, History } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getDashboardStats } from "@/lib/dashboard.functions";
 import { format } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
+  beforeLoad: async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      throw redirect({
+        to: "/auth",
+      });
+    }
+  },
   component: Dashboard,
 });
+
 
 function Dashboard() {
   const getStatsFn = useServerFn(getDashboardStats);
