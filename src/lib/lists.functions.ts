@@ -57,25 +57,51 @@ export const testXtreamConnection = createServerFn({ method: "POST" })
   )
   .handler(async ({ data: { url, username, password } }) => {
     try {
+      // 1. URL Preservation: Ensure protocol and port are preserved, and no double slashes
       const baseUrl = url.trim().replace(/\/+$/, "");
       const testUrl = `${baseUrl}/player_api.php?username=${username}&password=${password}`;
       
-      const response = await fetch(testUrl, { signal: AbortSignal.timeout(10000) });
+      console.log(`[Xtream Test] Testing endpoint: ${baseUrl}/player_api.php`);
+
+      // 3. Execution: This runs in the backend (TanStack Server Function)
+      // 6. Redirects & 7. Timeout
+      const response = await fetch(testUrl, { 
+        method: "GET",
+        signal: AbortSignal.timeout(15000), // 15s timeout
+        redirect: "follow" // Follow redirects
+      });
       
+      // 8 & 9. Handle 403 and other statuses
       if (!response.ok) {
-        return { success: false, message: `Servidor retornou status ${response.status}` };
+        if (response.status === 403) {
+          return { 
+            success: false, 
+            status: 403,
+            message: "O servidor recusou a validação externa. Isso pode acontecer quando o provedor bloqueia conexões de servidores em nuvem. Confirme a URL e a porta ou teste diretamente no aplicativo." 
+          };
+        }
+        if (response.status === 401) {
+          return { success: false, status: 401, message: "Autenticação recusada (401)." };
+        }
+        return { success: false, status: response.status, message: `Servidor retornou status ${response.status}` };
       }
 
       const data = await response.json();
       
+      // Interpretation logic
       if (data.user_info && data.user_info.auth === 1) {
         return { success: true, message: "Conexão bem-sucedida!", info: data.user_info };
+      } else if (data.auth === 0 || (data.user_info && data.user_info.auth === 0)) {
+        return { success: false, message: "Credenciais inválidas." };
       } else {
-        return { success: false, message: "Credenciais inválidas ou resposta inesperada." };
+        return { success: false, message: "Resposta inesperada do servidor." };
       }
     } catch (error: any) {
       if (error.name === 'TimeoutError') {
-        return { success: false, message: "Tempo de resposta esgotado (Timeout)." };
+        return { success: false, message: "Servidor não respondeu (Timeout)." };
+      }
+      if (error.message?.includes('getaddrinfo') || error.code === 'ENOTFOUND') {
+        return { success: false, message: "Erro de DNS: endereço inválido." };
       }
       return { success: false, message: `Erro ao conectar: ${error.message}` };
     }
