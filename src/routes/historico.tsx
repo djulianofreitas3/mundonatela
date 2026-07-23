@@ -1,14 +1,24 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Layout } from "@/components/layout/Layout";
 import { useQuery } from "@tanstack/react-query";
 import { getHistory } from "@/lib/history.functions";
 import { format } from "date-fns";
-import { History as HistoryIcon, Loader2, Monitor, User, Tv, Clock } from "lucide-react";
+import { Loader2, Monitor, User, Tv, Clock } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/historico")({
+  beforeLoad: async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      throw redirect({
+        to: "/auth",
+      });
+    }
+  },
   component: HistoryPage,
 });
+
 
 function HistoryPage() {
   const getHistoryFn = useServerFn(getHistory);
