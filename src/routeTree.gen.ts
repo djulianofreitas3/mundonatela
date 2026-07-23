@@ -9,14 +9,37 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ListasRouteImport } from './routes/listas'
+import { Route as HistoricoRouteImport } from './routes/historico'
 import { Route as DispositivosRouteImport } from './routes/dispositivos'
+import { Route as ConfigRouteImport } from './routes/config'
 import { Route as ClientesRouteImport } from './routes/clientes'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AtivacoesRouteImport } from './routes/ativacoes'
+import { Route as AdminsRouteImport } from './routes/admins'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiPublicDeviceRequestCodeRouteImport } from './routes/api/public/device/request-code'
+import { Route as ApiPublicDeviceRegisterRouteImport } from './routes/api/public/device/register'
+import { Route as ApiPublicDeviceCheckRouteImport } from './routes/api/public/device/check'
 
+const ListasRoute = ListasRouteImport.update({
+  id: '/listas',
+  path: '/listas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistoricoRoute = HistoricoRouteImport.update({
+  id: '/historico',
+  path: '/historico',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DispositivosRoute = DispositivosRouteImport.update({
   id: '/dispositivos',
   path: '/dispositivos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfigRoute = ConfigRouteImport.update({
+  id: '/config',
+  path: '/config',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClientesRoute = ClientesRouteImport.update({
@@ -24,9 +47,19 @@ const ClientesRoute = ClientesRouteImport.update({
   path: '/clientes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AtivacoesRoute = AtivacoesRouteImport.update({
   id: '/ativacoes',
   path: '/ativacoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminsRoute = AdminsRouteImport.update({
+  id: '/admins',
+  path: '/admins',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -34,48 +67,154 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicDeviceRequestCodeRoute =
+  ApiPublicDeviceRequestCodeRouteImport.update({
+    id: '/api/public/device/request-code',
+    path: '/api/public/device/request-code',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicDeviceRegisterRoute = ApiPublicDeviceRegisterRouteImport.update({
+  id: '/api/public/device/register',
+  path: '/api/public/device/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicDeviceCheckRoute = ApiPublicDeviceCheckRouteImport.update({
+  id: '/api/public/device/check',
+  path: '/api/public/device/check',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admins': typeof AdminsRoute
   '/ativacoes': typeof AtivacoesRoute
+  '/auth': typeof AuthRoute
   '/clientes': typeof ClientesRoute
+  '/config': typeof ConfigRoute
   '/dispositivos': typeof DispositivosRoute
+  '/historico': typeof HistoricoRoute
+  '/listas': typeof ListasRoute
+  '/api/public/device/check': typeof ApiPublicDeviceCheckRoute
+  '/api/public/device/register': typeof ApiPublicDeviceRegisterRoute
+  '/api/public/device/request-code': typeof ApiPublicDeviceRequestCodeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admins': typeof AdminsRoute
   '/ativacoes': typeof AtivacoesRoute
+  '/auth': typeof AuthRoute
   '/clientes': typeof ClientesRoute
+  '/config': typeof ConfigRoute
   '/dispositivos': typeof DispositivosRoute
+  '/historico': typeof HistoricoRoute
+  '/listas': typeof ListasRoute
+  '/api/public/device/check': typeof ApiPublicDeviceCheckRoute
+  '/api/public/device/register': typeof ApiPublicDeviceRegisterRoute
+  '/api/public/device/request-code': typeof ApiPublicDeviceRequestCodeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admins': typeof AdminsRoute
   '/ativacoes': typeof AtivacoesRoute
+  '/auth': typeof AuthRoute
   '/clientes': typeof ClientesRoute
+  '/config': typeof ConfigRoute
   '/dispositivos': typeof DispositivosRoute
+  '/historico': typeof HistoricoRoute
+  '/listas': typeof ListasRoute
+  '/api/public/device/check': typeof ApiPublicDeviceCheckRoute
+  '/api/public/device/register': typeof ApiPublicDeviceRegisterRoute
+  '/api/public/device/request-code': typeof ApiPublicDeviceRequestCodeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/ativacoes' | '/clientes' | '/dispositivos'
+  fullPaths:
+    | '/'
+    | '/admins'
+    | '/ativacoes'
+    | '/auth'
+    | '/clientes'
+    | '/config'
+    | '/dispositivos'
+    | '/historico'
+    | '/listas'
+    | '/api/public/device/check'
+    | '/api/public/device/register'
+    | '/api/public/device/request-code'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ativacoes' | '/clientes' | '/dispositivos'
-  id: '__root__' | '/' | '/ativacoes' | '/clientes' | '/dispositivos'
+  to:
+    | '/'
+    | '/admins'
+    | '/ativacoes'
+    | '/auth'
+    | '/clientes'
+    | '/config'
+    | '/dispositivos'
+    | '/historico'
+    | '/listas'
+    | '/api/public/device/check'
+    | '/api/public/device/register'
+    | '/api/public/device/request-code'
+  id:
+    | '__root__'
+    | '/'
+    | '/admins'
+    | '/ativacoes'
+    | '/auth'
+    | '/clientes'
+    | '/config'
+    | '/dispositivos'
+    | '/historico'
+    | '/listas'
+    | '/api/public/device/check'
+    | '/api/public/device/register'
+    | '/api/public/device/request-code'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminsRoute: typeof AdminsRoute
   AtivacoesRoute: typeof AtivacoesRoute
+  AuthRoute: typeof AuthRoute
   ClientesRoute: typeof ClientesRoute
+  ConfigRoute: typeof ConfigRoute
   DispositivosRoute: typeof DispositivosRoute
+  HistoricoRoute: typeof HistoricoRoute
+  ListasRoute: typeof ListasRoute
+  ApiPublicDeviceCheckRoute: typeof ApiPublicDeviceCheckRoute
+  ApiPublicDeviceRegisterRoute: typeof ApiPublicDeviceRegisterRoute
+  ApiPublicDeviceRequestCodeRoute: typeof ApiPublicDeviceRequestCodeRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/listas': {
+      id: '/listas'
+      path: '/listas'
+      fullPath: '/listas'
+      preLoaderRoute: typeof ListasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/historico': {
+      id: '/historico'
+      path: '/historico'
+      fullPath: '/historico'
+      preLoaderRoute: typeof HistoricoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dispositivos': {
       id: '/dispositivos'
       path: '/dispositivos'
       fullPath: '/dispositivos'
       preLoaderRoute: typeof DispositivosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/config': {
+      id: '/config'
+      path: '/config'
+      fullPath: '/config'
+      preLoaderRoute: typeof ConfigRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/clientes': {
@@ -85,11 +224,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClientesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ativacoes': {
       id: '/ativacoes'
       path: '/ativacoes'
       fullPath: '/ativacoes'
       preLoaderRoute: typeof AtivacoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admins': {
+      id: '/admins'
+      path: '/admins'
+      fullPath: '/admins'
+      preLoaderRoute: typeof AdminsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -99,14 +252,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/device/request-code': {
+      id: '/api/public/device/request-code'
+      path: '/api/public/device/request-code'
+      fullPath: '/api/public/device/request-code'
+      preLoaderRoute: typeof ApiPublicDeviceRequestCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/device/register': {
+      id: '/api/public/device/register'
+      path: '/api/public/device/register'
+      fullPath: '/api/public/device/register'
+      preLoaderRoute: typeof ApiPublicDeviceRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/device/check': {
+      id: '/api/public/device/check'
+      path: '/api/public/device/check'
+      fullPath: '/api/public/device/check'
+      preLoaderRoute: typeof ApiPublicDeviceCheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminsRoute: AdminsRoute,
   AtivacoesRoute: AtivacoesRoute,
+  AuthRoute: AuthRoute,
   ClientesRoute: ClientesRoute,
+  ConfigRoute: ConfigRoute,
   DispositivosRoute: DispositivosRoute,
+  HistoricoRoute: HistoricoRoute,
+  ListasRoute: ListasRoute,
+  ApiPublicDeviceCheckRoute: ApiPublicDeviceCheckRoute,
+  ApiPublicDeviceRegisterRoute: ApiPublicDeviceRegisterRoute,
+  ApiPublicDeviceRequestCodeRoute: ApiPublicDeviceRequestCodeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
