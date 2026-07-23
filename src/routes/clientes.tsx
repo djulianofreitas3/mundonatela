@@ -1,14 +1,17 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Layout } from "@/components/layout/Layout";
 import { useState } from "react";
-import { Search, Plus, MoreVertical, Trash2, Edit2, Phone, Calendar, Loader2 } from "lucide-react";
+import { Search, Plus, Trash2, Edit2, Phone, Calendar, Loader2 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getClients, createClient, deleteClient, updateClient } from "@/lib/clients.functions";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { format } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
 
 const clientSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -21,8 +24,17 @@ const clientSchema = z.object({
 type ClientFormData = z.infer<typeof clientSchema>;
 
 export const Route = createFileRoute("/clientes")({
+  beforeLoad: async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      throw redirect({
+        to: "/auth",
+      });
+    }
+  },
   component: Clients,
 });
+
 
 function Clients() {
   const [search, setSearch] = useState("");
@@ -48,9 +60,15 @@ function Clients() {
     mutationFn: (data: ClientFormData) => createClientFn({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clients"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
       setIsModalOpen(false);
       reset();
+      toast.success("Cliente criado com sucesso!");
     },
+    onError: (err: any) => {
+      toast.error(`Erro ao criar cliente: ${err.message}`);
+    }
+
   });
 
   const updateMutation = useMutation({
@@ -60,7 +78,12 @@ function Clients() {
       setIsModalOpen(false);
       setEditingClient(null);
       reset();
+      toast.success("Cliente atualizado com sucesso!");
     },
+    onError: (err: any) => {
+      toast.error(`Erro ao atualizar cliente: ${err.message}`);
+    }
+
   });
 
   const deleteMutation = useMutation({
@@ -72,7 +95,15 @@ function Clients() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clients"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
+      toast.success("Cliente excluído!");
     },
+    onError: (err: any) => {
+      if (err.message !== "Cancelado") {
+        toast.error(`Erro ao excluir: ${err.message}`);
+      }
+    }
+
   });
 
   const onSubmit = (data: ClientFormData) => {
