@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Layout } from "@/components/layout/Layout";
 import { useState } from "react";
-import { Search, Plus, MoreVertical, Trash2, Edit2, ShieldCheck, ShieldX, Phone, Calendar, Info, Loader2 } from "lucide-react";
+import { Search, Plus, MoreVertical, Trash2, Edit2, Phone, Calendar, Loader2 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getClients, createClient, deleteClient, updateClient } from "@/lib/clients.functions";
 import { useForm } from "react-hook-form";
@@ -30,13 +30,22 @@ function Clients() {
   const [editingClient, setEditingClient] = useState<any>(null);
   const queryClient = useQueryClient();
 
+  const getClientsFn = useServerFn(getClients);
+  const createClientFn = useServerFn(createClient);
+  const updateClientFn = useServerFn(updateClient);
+  const deleteClientFn = useServerFn(deleteClient);
+
   const { data: clients = [], isLoading } = useQuery({
     queryKey: ["clients"],
-    queryFn: () => getClients(),
+    queryFn: () => getClientsFn(),
+  });
+
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<ClientFormData>({
+    resolver: zodResolver(clientSchema),
   });
 
   const createMutation = useMutation({
-    mutationFn: createClient,
+    mutationFn: (data: ClientFormData) => createClientFn({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clients"] });
       setIsModalOpen(false);
@@ -45,7 +54,7 @@ function Clients() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: updateClient,
+    mutationFn: (data: any) => updateClientFn({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clients"] });
       setIsModalOpen(false);
@@ -57,17 +66,13 @@ function Clients() {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => {
       if (confirm("Tem certeza que deseja excluir este cliente?")) {
-        return deleteClient(id);
+        return deleteClientFn({ data: id });
       }
       throw new Error("Cancelado");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clients"] });
     },
-  });
-
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<ClientFormData>({
-    resolver: zodResolver(clientSchema),
   });
 
   const onSubmit = (data: ClientFormData) => {
@@ -78,10 +83,10 @@ function Clients() {
     }
   };
 
-  const filteredClients = clients.filter((c: any) => 
+  const filteredClients = Array.isArray(clients) ? clients.filter((c: any) => 
     c.nome.toLowerCase().includes(search.toLowerCase()) || 
     (c.telefone && c.telefone.includes(search))
-  );
+  ) : [];
 
   return (
     <Layout title="Clientes">
