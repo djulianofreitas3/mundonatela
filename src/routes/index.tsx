@@ -1,57 +1,3 @@
-/**
- * CONFIGURAÇÃO DE ACESSO E CONTRATO DA API PÚBLICA (ANDROID)
- * 
- * 1. ACESSO ADMINISTRATIVO:
- *    Email: admin@mundonatela.com
- *    Senha: admin123456
- * 
- * 2. CONTRATO DA API PÚBLICA (ATIVAÇÃO ANDROID):
- *    URL Base: https://mundonatela.lovable.app
- * 
- *    A. Registro do Dispositivo (Primeiro Acesso)
- *       POST /api/public/device/register
- *       Body: { "installation_id": "STRING_UNICA", "device_name": "MODELO_DISPOSITIVO" }
- *       Resp: { "success": true, "device_id": "UUID", "status": "pending" }
- * 
- *    B. Solicitar Código de Ativação (Exibir na Tela do App)
- *       POST /api/public/device/request-code
- *       Body: { "installation_id": "STRING_UNICA" }
- *       Resp: { "success": true, "code": "6_CHAR_CODE", "request_id": "UUID", "poll_token": "UUID" }
- *       Nota: O app deve guardar request_id e poll_token para o próximo passo.
- * 
- *    C. Consultar Status (Polling - A cada 5-10 segundos)
- *       POST /api/public/device/poll
- *       Body: { "request_id": "UUID", "poll_token": "UUID" }
- *       Respostas:
- *       - { "status": "pending" } -> Continuar aguardando
- *       - { "status": "approved", "device_token": "UUID" } -> Ativado! Guardar device_token.
- *       - { "status": "rejected" | "expired" | "blocked" } -> Parar e informar usuário.
- * 
- *    D. Verificar Configuração e Lista (A cada abertura do App)
- *       POST /api/public/device/check
- *       Body: { "installation_id": "STRING_UNICA", "device_token": "UUID" }
- *       OU Header: Authorization: Bearer UUID
- *       Resp: { 
- *         "status": "active", 
- *         "expires_at": "ISO_DATE",
- *         "config": { 
- *           "client_name": "NOME", 
- *           "lists": [{ "name": "LISTA", "url": "...", "username": "...", "password": "..." }] 
- *         }
- *       }
- * 
- * 3. ARQUIVOS IMPLEMENTADOS:
- *    - src/routes/api/public/device/register.ts
- *    - src/routes/api/public/device/request-code.ts
- *    - src/routes/api/public/device/poll.ts
- *    - src/routes/api/public/device/check.ts
- * 
- * 4. RESULTADO DO ÚLTIMO BUILD:
- *    Comando: npm run build
- *    Resultado: Sucesso (Exit code: 0)
- *    Arquivo Hotfix: src/routes/api/public/device/check.ts (Proteção de result.data)
- */
-
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Layout } from "@/components/layout/Layout";
@@ -74,7 +20,6 @@ export const Route = createFileRoute("/")({
   },
   component: Dashboard,
 });
-
 
 function Dashboard() {
   const [isActivationModalOpen, setIsActivationModalOpen] = useState(false);
