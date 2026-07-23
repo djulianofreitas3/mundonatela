@@ -1,5 +1,9 @@
-import { Link, Outlet } from "@tanstack/react-router";
-import { LayoutDashboard, Users, Tv, Smartphone, Clock, History, Settings, Shield } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { LayoutDashboard, Users, Tv, Smartphone, Clock, History, Settings, Shield, LogOut } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
 
 export function Layout({ children, title }: { children: React.ReactNode; title: string }) {
   const menu = [
@@ -13,24 +17,43 @@ export function Layout({ children, title }: { children: React.ReactNode; title: 
     { name: "Configurações", path: "/config", icon: Settings },
   ];
 
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.info("Você saiu do sistema");
+    navigate({ to: "/auth" });
+  };
+
   return (
     <div className="min-h-screen flex bg-background">
-      <aside className="w-64 border-r border-border bg-card hidden md:block">
+      <aside className="w-64 border-r border-border bg-card hidden md:block flex flex-col">
         <div className="p-6 font-bold text-xl text-primary">Painel IPTV</div>
-        <nav className="mt-6 px-4 space-y-2">
+        <nav className="flex-1 mt-6 px-4 space-y-2">
           {menu.map((item) => (
             <Link
               key={item.path}
               to={item.path}
               className="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-              activeProps={{ className: "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground" }}
+              activeProps={{ className: "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground" as any }}
             >
               <item.icon size={20} />
               <span>{item.name}</span>
             </Link>
           ))}
         </nav>
+        <div className="p-4 border-t border-border">
+          <Button 
+            variant="ghost" 
+            className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+            onClick={handleLogout}
+          >
+            <LogOut className="mr-3 h-5 w-5" />
+            Sair
+          </Button>
+        </div>
       </aside>
+
       <main className="flex-1 p-8">
         <h1 className="text-2xl font-bold mb-8 text-foreground">{title}</h1>
         {children}
