@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Layout } from "@/components/layout/Layout";
 import { useState } from "react";
@@ -8,10 +8,21 @@ import { getPendingActivations, activateDeviceAction } from "@/lib/devices.funct
 import { getClients } from "@/lib/clients.functions";
 import { getLists } from "@/lib/lists.functions";
 import { format, differenceInMinutes, parseISO } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/ativacoes")({
+  beforeLoad: async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      throw redirect({
+        to: "/auth",
+      });
+    }
+  },
   component: PendingActivations,
 });
+
 
 function PendingActivations() {
   const [search, setSearch] = useState("");
@@ -49,11 +60,14 @@ function PendingActivations() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["pending-activations"] });
       queryClient.invalidateQueries({ queryKey: ["devices"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
       setSelectedActivation(null);
+      toast.success("Dispositivo ativado com sucesso!");
     },
-    onError: (err) => {
-      alert(err.message);
+    onError: (err: any) => {
+      toast.error(`Falha na ativação: ${err.message}`);
     }
+
   });
 
   const handleActivate = (e: React.FormEvent) => {
