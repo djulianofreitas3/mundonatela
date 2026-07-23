@@ -18,6 +18,9 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AtivacoesRouteImport } from './routes/ativacoes'
 import { Route as AdminsRouteImport } from './routes/admins'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiPublicDeviceRequestCodeRouteImport } from './routes/api.public.device.request-code'
+import { Route as ApiPublicDeviceRegisterRouteImport } from './routes/api.public.device.register'
+import { Route as ApiPublicDeviceCheckRouteImport } from './routes/api.public.device.check'
 
 const ListasRoute = ListasRouteImport.update({
   id: '/listas',
@@ -64,6 +67,22 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicDeviceRequestCodeRoute =
+  ApiPublicDeviceRequestCodeRouteImport.update({
+    id: '/api/public/device/request-code',
+    path: '/api/public/device/request-code',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicDeviceRegisterRoute = ApiPublicDeviceRegisterRouteImport.update({
+  id: '/api/public/device/register',
+  path: '/api/public/device/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicDeviceCheckRoute = ApiPublicDeviceCheckRouteImport.update({
+  id: '/api/public/device/check',
+  path: '/api/public/device/check',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -75,6 +94,9 @@ export interface FileRoutesByFullPath {
   '/dispositivos': typeof DispositivosRoute
   '/historico': typeof HistoricoRoute
   '/listas': typeof ListasRoute
+  '/api/public/device/check': typeof ApiPublicDeviceCheckRoute
+  '/api/public/device/register': typeof ApiPublicDeviceRegisterRoute
+  '/api/public/device/request-code': typeof ApiPublicDeviceRequestCodeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,6 +108,9 @@ export interface FileRoutesByTo {
   '/dispositivos': typeof DispositivosRoute
   '/historico': typeof HistoricoRoute
   '/listas': typeof ListasRoute
+  '/api/public/device/check': typeof ApiPublicDeviceCheckRoute
+  '/api/public/device/register': typeof ApiPublicDeviceRegisterRoute
+  '/api/public/device/request-code': typeof ApiPublicDeviceRequestCodeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,6 +123,9 @@ export interface FileRoutesById {
   '/dispositivos': typeof DispositivosRoute
   '/historico': typeof HistoricoRoute
   '/listas': typeof ListasRoute
+  '/api/public/device/check': typeof ApiPublicDeviceCheckRoute
+  '/api/public/device/register': typeof ApiPublicDeviceRegisterRoute
+  '/api/public/device/request-code': typeof ApiPublicDeviceRequestCodeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +139,9 @@ export interface FileRouteTypes {
     | '/dispositivos'
     | '/historico'
     | '/listas'
+    | '/api/public/device/check'
+    | '/api/public/device/register'
+    | '/api/public/device/request-code'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +153,9 @@ export interface FileRouteTypes {
     | '/dispositivos'
     | '/historico'
     | '/listas'
+    | '/api/public/device/check'
+    | '/api/public/device/register'
+    | '/api/public/device/request-code'
   id:
     | '__root__'
     | '/'
@@ -133,6 +167,9 @@ export interface FileRouteTypes {
     | '/dispositivos'
     | '/historico'
     | '/listas'
+    | '/api/public/device/check'
+    | '/api/public/device/register'
+    | '/api/public/device/request-code'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -145,6 +182,9 @@ export interface RootRouteChildren {
   DispositivosRoute: typeof DispositivosRoute
   HistoricoRoute: typeof HistoricoRoute
   ListasRoute: typeof ListasRoute
+  ApiPublicDeviceCheckRoute: typeof ApiPublicDeviceCheckRoute
+  ApiPublicDeviceRegisterRoute: typeof ApiPublicDeviceRegisterRoute
+  ApiPublicDeviceRequestCodeRoute: typeof ApiPublicDeviceRequestCodeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -212,6 +252,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/device/request-code': {
+      id: '/api/public/device/request-code'
+      path: '/api/public/device/request-code'
+      fullPath: '/api/public/device/request-code'
+      preLoaderRoute: typeof ApiPublicDeviceRequestCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/device/register': {
+      id: '/api/public/device/register'
+      path: '/api/public/device/register'
+      fullPath: '/api/public/device/register'
+      preLoaderRoute: typeof ApiPublicDeviceRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/device/check': {
+      id: '/api/public/device/check'
+      path: '/api/public/device/check'
+      fullPath: '/api/public/device/check'
+      preLoaderRoute: typeof ApiPublicDeviceCheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -225,6 +286,9 @@ const rootRouteChildren: RootRouteChildren = {
   DispositivosRoute: DispositivosRoute,
   HistoricoRoute: HistoricoRoute,
   ListasRoute: ListasRoute,
+  ApiPublicDeviceCheckRoute: ApiPublicDeviceCheckRoute,
+  ApiPublicDeviceRegisterRoute: ApiPublicDeviceRegisterRoute,
+  ApiPublicDeviceRequestCodeRoute: ApiPublicDeviceRequestCodeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
