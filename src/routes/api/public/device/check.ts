@@ -39,8 +39,8 @@ Route.options.server = {
           return new Response(JSON.stringify({ error: 'Invalid input' }), { status: 400 })
         }
 
+        if (!result.data) return new Response(JSON.stringify({ error: 'installation_id required' }), { status: 400 })
         const { installation_id } = result.data
-        if (!installation_id) return new Response(JSON.stringify({ error: 'installation_id required' }), { status: 400 })
 
         const query = supabaseAdmin
           .from('dispositivos')
