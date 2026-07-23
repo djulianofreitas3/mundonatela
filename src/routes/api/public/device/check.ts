@@ -14,7 +14,13 @@ Route.options.server = {
     POST: async ({ request }: { request: Request }) => {
       try {
         const { supabaseAdmin } = await import('@/integrations/supabase/client.server')
-        const body = await request.json()
+        const authHeader = request.headers.get('Authorization')
+        let body: any = {}
+        try {
+          body = await request.json()
+        } catch (e) {
+          // Body might be empty
+        }
         
         const schema = z.object({
           installation_id: z.string().min(5),
@@ -22,9 +28,18 @@ Route.options.server = {
         })
 
         const result = schema.safeParse(body)
-        if (!result.success) return new Response(JSON.stringify({ error: 'Invalid input' }), { status: 400 })
+        
+        // If Bearer token is provided, we prioritize it
+        let tokenToVerify = body.device_token
+        if (authHeader?.startsWith('Bearer ')) {
+          tokenToVerify = authHeader.substring(7)
+        }
 
-        const { installation_id, device_token } = result.data
+        if (!result.success && !tokenToVerify) {
+          return new Response(JSON.stringify({ error: 'Invalid input' }), { status: 400 })
+        }
+
+        const { installation_id } = result.data || {}
 
         const query = supabaseAdmin
           .from('dispositivos')
@@ -44,8 +59,8 @@ Route.options.server = {
         const { data: device, error } = await query
         if (error || !device) return new Response(JSON.stringify({ error: 'Device not found' }), { status: 404 })
 
-        if (device.status === 'active' && device.device_token !== device_token) {
-          return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 })
+        if (device.status === 'active' && device.device_token !== tokenToVerify) {
+          return new Response(JSON.stringify({ error: 'Unauthorized', status: 'blocked' }), { status: 401 })
         }
 
         const isExpired = device.expires_at ? new Date(device.expires_at) < new Date() : false
@@ -54,7 +69,7 @@ Route.options.server = {
         await supabaseAdmin
           .from('dispositivos')
           .update({ last_seen_at: new Date().toISOString() })
-          .eq('id', device.id)
+          .eq('id', device.id as string)
 
         return new Response(JSON.stringify({
           status: effectiveStatus,

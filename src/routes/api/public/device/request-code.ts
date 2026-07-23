@@ -40,19 +40,23 @@ Route.options.server = {
         const code = Math.random().toString(36).substring(2, 8).toUpperCase()
         const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString()
 
-        const { error: codeErr } = await supabaseAdmin
+        const { data: newCode, error: codeErr } = await supabaseAdmin
           .from('codigos_ativacao')
           .insert({
             code,
             installation_id,
             expires_at: expiresAt
           })
+          .select('request_id, poll_token')
+          .single()
 
         if (codeErr) throw codeErr
 
         return new Response(JSON.stringify({ 
           success: true, 
           code,
+          request_id: newCode.request_id,
+          poll_token: newCode.poll_token,
           expires_at: expiresAt
         }), {
           status: 200,

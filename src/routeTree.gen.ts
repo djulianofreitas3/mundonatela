@@ -20,6 +20,7 @@ import { Route as AdminsRouteImport } from './routes/admins'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiPublicDeviceRequestCodeRouteImport } from './routes/api/public/device/request-code'
 import { Route as ApiPublicDeviceRegisterRouteImport } from './routes/api/public/device/register'
+import { Route as ApiPublicDevicePollRouteImport } from './routes/api/public/device/poll'
 import { Route as ApiPublicDeviceCheckRouteImport } from './routes/api/public/device/check'
 
 const ListasRoute = ListasRouteImport.update({
@@ -78,6 +79,11 @@ const ApiPublicDeviceRegisterRoute = ApiPublicDeviceRegisterRouteImport.update({
   path: '/api/public/device/register',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicDevicePollRoute = ApiPublicDevicePollRouteImport.update({
+  id: '/api/public/device/poll',
+  path: '/api/public/device/poll',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicDeviceCheckRoute = ApiPublicDeviceCheckRouteImport.update({
   id: '/api/public/device/check',
   path: '/api/public/device/check',
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/historico': typeof HistoricoRoute
   '/listas': typeof ListasRoute
   '/api/public/device/check': typeof ApiPublicDeviceCheckRoute
+  '/api/public/device/poll': typeof ApiPublicDevicePollRoute
   '/api/public/device/register': typeof ApiPublicDeviceRegisterRoute
   '/api/public/device/request-code': typeof ApiPublicDeviceRequestCodeRoute
 }
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/historico': typeof HistoricoRoute
   '/listas': typeof ListasRoute
   '/api/public/device/check': typeof ApiPublicDeviceCheckRoute
+  '/api/public/device/poll': typeof ApiPublicDevicePollRoute
   '/api/public/device/register': typeof ApiPublicDeviceRegisterRoute
   '/api/public/device/request-code': typeof ApiPublicDeviceRequestCodeRoute
 }
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/historico': typeof HistoricoRoute
   '/listas': typeof ListasRoute
   '/api/public/device/check': typeof ApiPublicDeviceCheckRoute
+  '/api/public/device/poll': typeof ApiPublicDevicePollRoute
   '/api/public/device/register': typeof ApiPublicDeviceRegisterRoute
   '/api/public/device/request-code': typeof ApiPublicDeviceRequestCodeRoute
 }
@@ -140,6 +149,7 @@ export interface FileRouteTypes {
     | '/historico'
     | '/listas'
     | '/api/public/device/check'
+    | '/api/public/device/poll'
     | '/api/public/device/register'
     | '/api/public/device/request-code'
   fileRoutesByTo: FileRoutesByTo
@@ -154,6 +164,7 @@ export interface FileRouteTypes {
     | '/historico'
     | '/listas'
     | '/api/public/device/check'
+    | '/api/public/device/poll'
     | '/api/public/device/register'
     | '/api/public/device/request-code'
   id:
@@ -168,6 +179,7 @@ export interface FileRouteTypes {
     | '/historico'
     | '/listas'
     | '/api/public/device/check'
+    | '/api/public/device/poll'
     | '/api/public/device/register'
     | '/api/public/device/request-code'
   fileRoutesById: FileRoutesById
@@ -183,6 +195,7 @@ export interface RootRouteChildren {
   HistoricoRoute: typeof HistoricoRoute
   ListasRoute: typeof ListasRoute
   ApiPublicDeviceCheckRoute: typeof ApiPublicDeviceCheckRoute
+  ApiPublicDevicePollRoute: typeof ApiPublicDevicePollRoute
   ApiPublicDeviceRegisterRoute: typeof ApiPublicDeviceRegisterRoute
   ApiPublicDeviceRequestCodeRoute: typeof ApiPublicDeviceRequestCodeRoute
 }
@@ -266,6 +279,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicDeviceRegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/device/poll': {
+      id: '/api/public/device/poll'
+      path: '/api/public/device/poll'
+      fullPath: '/api/public/device/poll'
+      preLoaderRoute: typeof ApiPublicDevicePollRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/device/check': {
       id: '/api/public/device/check'
       path: '/api/public/device/check'
@@ -287,6 +307,7 @@ const rootRouteChildren: RootRouteChildren = {
   HistoricoRoute: HistoricoRoute,
   ListasRoute: ListasRoute,
   ApiPublicDeviceCheckRoute: ApiPublicDeviceCheckRoute,
+  ApiPublicDevicePollRoute: ApiPublicDevicePollRoute,
   ApiPublicDeviceRegisterRoute: ApiPublicDeviceRegisterRoute,
   ApiPublicDeviceRequestCodeRoute: ApiPublicDeviceRequestCodeRoute,
 }

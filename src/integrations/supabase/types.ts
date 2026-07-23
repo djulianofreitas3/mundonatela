@@ -54,6 +54,8 @@ export type Database = {
           expires_at: string
           id: string
           installation_id: string
+          poll_token: string | null
+          request_id: string | null
           used_at: string | null
         }
         Insert: {
@@ -62,6 +64,8 @@ export type Database = {
           expires_at?: string
           id?: string
           installation_id: string
+          poll_token?: string | null
+          request_id?: string | null
           used_at?: string | null
         }
         Update: {
@@ -70,6 +74,8 @@ export type Database = {
           expires_at?: string
           id?: string
           installation_id?: string
+          poll_token?: string | null
+          request_id?: string | null
           used_at?: string | null
         }
         Relationships: [

@@ -2,6 +2,34 @@
 // E-mail: admin@mundonatela.com
 // Senha: admin123456
 
+/**
+ * CONTRATO DA API PÚBLICA (IPTV Android)
+ * 
+ * URL BASE: https://id-preview--ccc9c726-0c84-4d1a-af25-d0dd92838866.lovable.app
+ * (Em produção: https://mundonatela.lovable.app)
+ * 
+ * 1. REGISTRAR DISPOSITIVO (Boot inicial)
+ * POST /api/public/device/register
+ * Body: { "installation_id": "UUID_OU_ID_UNICO", "device_name": "Samsung S21", "android_version": "12" }
+ * Resp: { "success": true, "device_id": "...", "status": "pending" }
+ * 
+ * 2. SOLICITAR CÓDIGO DE ATIVAÇÃO
+ * POST /api/public/device/request-code
+ * Body: { "installation_id": "ID_USADO_NO_REGISTRO" }
+ * Resp: { "success": true, "code": "ABC123", "request_id": "UUID", "poll_token": "UUID", "expires_at": "ISO_DATE" }
+ * 
+ * 3. CONSULTAR STATUS DA ATIVAÇÃO (Polling)
+ * POST /api/public/device/poll
+ * Body: { "request_id": "UUID_RECEBIDO", "poll_token": "UUID_RECEBIDO" }
+ * Resp: { "status": "pending|approved|rejected|expired|blocked", "device_token": "UUID_SE_APROVADO" }
+ * 
+ * 4. VALIDAR E OBTER CONFIGURAÇÃO (Sempre no Start do App)
+ * POST /api/public/device/check
+ * Header: Authorization: Bearer <device_token>
+ * Body: { "installation_id": "ID_DO_DISPOSITIVO" }
+ * Resp: { "status": "active", "config": { "lists": [...] }, "expires_at": "..." }
+ */
+
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Layout } from "@/components/layout/Layout";
