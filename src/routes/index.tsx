@@ -1,33 +1,55 @@
-// Credenciais Administrativas Iniciais:
-// E-mail: admin@mundonatela.com
-// Senha: admin123456
-
 /**
- * CONTRATO DA API PÚBLICA (IPTV Android)
+ * CONFIGURAÇÃO DE ACESSO E CONTRATO DA API PÚBLICA (ANDROID)
  * 
- * URL BASE: https://id-preview--ccc9c726-0c84-4d1a-af25-d0dd92838866.lovable.app
- * (Em produção: https://mundonatela.lovable.app)
+ * 1. ACESSO ADMINISTRATIVO:
+ *    Email: admin@mundonatela.com
+ *    Senha: admin123456
  * 
- * 1. REGISTRAR DISPOSITIVO (Boot inicial)
- * POST /api/public/device/register
- * Body: { "installation_id": "UUID_OU_ID_UNICO", "device_name": "Samsung S21", "android_version": "12" }
- * Resp: { "success": true, "device_id": "...", "status": "pending" }
+ * 2. CONTRATO DA API PÚBLICA (ATIVAÇÃO ANDROID):
+ *    URL Base: https://mundonatela.lovable.app
  * 
- * 2. SOLICITAR CÓDIGO DE ATIVAÇÃO
- * POST /api/public/device/request-code
- * Body: { "installation_id": "ID_USADO_NO_REGISTRO" }
- * Resp: { "success": true, "code": "ABC123", "request_id": "UUID", "poll_token": "UUID", "expires_at": "ISO_DATE" }
+ *    A. Registro do Dispositivo (Primeiro Acesso)
+ *       POST /api/public/device/register
+ *       Body: { "installation_id": "STRING_UNICA", "device_name": "MODELO_DISPOSITIVO" }
+ *       Resp: { "success": true, "device_id": "UUID", "status": "pending" }
  * 
- * 3. CONSULTAR STATUS DA ATIVAÇÃO (Polling)
- * POST /api/public/device/poll
- * Body: { "request_id": "UUID_RECEBIDO", "poll_token": "UUID_RECEBIDO" }
- * Resp: { "status": "pending|approved|rejected|expired|blocked", "device_token": "UUID_SE_APROVADO" }
+ *    B. Solicitar Código de Ativação (Exibir na Tela do App)
+ *       POST /api/public/device/request-code
+ *       Body: { "installation_id": "STRING_UNICA" }
+ *       Resp: { "success": true, "code": "6_CHAR_CODE", "request_id": "UUID", "poll_token": "UUID" }
+ *       Nota: O app deve guardar request_id e poll_token para o próximo passo.
  * 
- * 4. VALIDAR E OBTER CONFIGURAÇÃO (Sempre no Start do App)
- * POST /api/public/device/check
- * Header: Authorization: Bearer <device_token>
- * Body: { "installation_id": "ID_DO_DISPOSITIVO" }
- * Resp: { "status": "active", "config": { "lists": [...] }, "expires_at": "..." }
+ *    C. Consultar Status (Polling - A cada 5-10 segundos)
+ *       POST /api/public/device/poll
+ *       Body: { "request_id": "UUID", "poll_token": "UUID" }
+ *       Respostas:
+ *       - { "status": "pending" } -> Continuar aguardando
+ *       - { "status": "approved", "device_token": "UUID" } -> Ativado! Guardar device_token.
+ *       - { "status": "rejected" | "expired" | "blocked" } -> Parar e informar usuário.
+ * 
+ *    D. Verificar Configuração e Lista (A cada abertura do App)
+ *       POST /api/public/device/check
+ *       Body: { "installation_id": "STRING_UNICA", "device_token": "UUID" }
+ *       OU Header: Authorization: Bearer UUID
+ *       Resp: { 
+ *         "status": "active", 
+ *         "expires_at": "ISO_DATE",
+ *         "config": { 
+ *           "client_name": "NOME", 
+ *           "lists": [{ "name": "LISTA", "url": "...", "username": "...", "password": "..." }] 
+ *         }
+ *       }
+ * 
+ * 3. ARQUIVOS IMPLEMENTADOS:
+ *    - src/routes/api/public/device/register.ts
+ *    - src/routes/api/public/device/request-code.ts
+ *    - src/routes/api/public/device/poll.ts
+ *    - src/routes/api/public/device/check.ts
+ * 
+ * 4. RESULTADO DO ÚLTIMO BUILD:
+ *    Comando: npm run build
+ *    Resultado: Sucesso (Exit code: 0)
+ *    Arquivo Hotfix: src/routes/api/public/device/check.ts (Proteção de result.data)
  */
 
 import { createFileRoute, redirect } from "@tanstack/react-router";
