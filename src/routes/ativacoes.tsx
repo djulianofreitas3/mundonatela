@@ -2,7 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Layout } from "@/components/layout/Layout";
 import { useState } from "react";
-import { Search, Check, List as ListIcon, Loader2, Clock, Smartphone, Plus } from "lucide-react";
+import { Search, Check, List as ListIcon, Loader2, Clock, Smartphone, Plus, ShieldCheck } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getPendingActivations } from "@/lib/devices.functions";
 import { format, differenceInMinutes, parseISO } from "date-fns";
