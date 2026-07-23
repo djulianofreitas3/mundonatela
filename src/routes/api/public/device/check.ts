@@ -69,7 +69,7 @@ Route.options.server = {
         await supabaseAdmin
           .from('dispositivos')
           .update({ last_seen_at: new Date().toISOString() })
-          .eq('id', device.id)
+          .eq('id', device.id as string)
 
         return new Response(JSON.stringify({
           status: effectiveStatus,

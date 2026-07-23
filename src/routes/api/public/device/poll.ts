@@ -28,7 +28,7 @@ Route.options.server = {
 
         const { data: codeData, error: codeErr } = await supabaseAdmin
           .from('codigos_ativacao')
-          .select('used, expires_at, installation_id')
+          .select('used_at, expires_at, installation_id')
           .eq('request_id', request_id)
           .eq('poll_token', poll_token)
           .single()
@@ -39,11 +39,11 @@ Route.options.server = {
 
         const isExpired = new Date(codeData.expires_at) < new Date()
         
-        if (isExpired && !codeData.used) {
+        if (isExpired && !codeData.used_at) {
           return new Response(JSON.stringify({ status: 'expired' }), { status: 200 })
         }
 
-        if (codeData.used) {
+        if (codeData.used_at) {
           // Check if device is indeed active
           const { data: device, error: devErr } = await supabaseAdmin
             .from('dispositivos')
