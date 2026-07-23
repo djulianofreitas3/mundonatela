@@ -51,7 +51,7 @@ export type Database = {
         Row: {
           code: string
           created_at: string | null
-          expires_at: string
+          expires_at: string | null
           id: string
           installation_id: string
           poll_token: string | null
@@ -61,7 +61,7 @@ export type Database = {
         Insert: {
           code: string
           created_at?: string | null
-          expires_at?: string
+          expires_at?: string | null
           id?: string
           installation_id: string
           poll_token?: string | null
@@ -71,7 +71,7 @@ export type Database = {
         Update: {
           code?: string
           created_at?: string | null
-          expires_at?: string
+          expires_at?: string | null
           id?: string
           installation_id?: string
           poll_token?: string | null
