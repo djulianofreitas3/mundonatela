@@ -14,7 +14,292 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      clientes: {
+        Row: {
+          created_at: string | null
+          id: string
+          nome: string
+          observacao: string | null
+          status: string | null
+          telefone: string | null
+          updated_at: string | null
+          vencimento: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          nome: string
+          observacao?: string | null
+          status?: string | null
+          telefone?: string | null
+          updated_at?: string | null
+          vencimento?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          nome?: string
+          observacao?: string | null
+          status?: string | null
+          telefone?: string | null
+          updated_at?: string | null
+          vencimento?: string | null
+        }
+        Relationships: []
+      }
+      codigos_ativacao: {
+        Row: {
+          code: string
+          created_at: string | null
+          expires_at: string
+          id: string
+          installation_id: string
+          used_at: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          expires_at?: string
+          id?: string
+          installation_id: string
+          used_at?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          expires_at?: string
+          id?: string
+          installation_id?: string
+          used_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "codigos_ativacao_installation_id_fkey"
+            columns: ["installation_id"]
+            isOneToOne: false
+            referencedRelation: "dispositivos"
+            referencedColumns: ["installation_id"]
+          },
+        ]
+      }
+      dispositivo_lista: {
+        Row: {
+          created_at: string | null
+          dispositivo_id: string | null
+          id: string
+          lista_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          dispositivo_id?: string | null
+          id?: string
+          lista_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          dispositivo_id?: string | null
+          id?: string
+          lista_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dispositivo_lista_dispositivo_id_fkey"
+            columns: ["dispositivo_id"]
+            isOneToOne: false
+            referencedRelation: "dispositivos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dispositivo_lista_lista_id_fkey"
+            columns: ["lista_id"]
+            isOneToOne: false
+            referencedRelation: "listas_iptv"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dispositivos: {
+        Row: {
+          activated_at: string | null
+          android_version: string | null
+          app_version: string | null
+          cliente_id: string | null
+          created_at: string | null
+          device_name: string | null
+          device_token: string | null
+          expires_at: string | null
+          id: string
+          installation_id: string
+          last_seen_at: string | null
+          status: Database["public"]["Enums"]["device_status"] | null
+          updated_at: string | null
+        }
+        Insert: {
+          activated_at?: string | null
+          android_version?: string | null
+          app_version?: string | null
+          cliente_id?: string | null
+          created_at?: string | null
+          device_name?: string | null
+          device_token?: string | null
+          expires_at?: string | null
+          id?: string
+          installation_id: string
+          last_seen_at?: string | null
+          status?: Database["public"]["Enums"]["device_status"] | null
+          updated_at?: string | null
+        }
+        Update: {
+          activated_at?: string | null
+          android_version?: string | null
+          app_version?: string | null
+          cliente_id?: string | null
+          created_at?: string | null
+          device_name?: string | null
+          device_token?: string | null
+          expires_at?: string | null
+          id?: string
+          installation_id?: string
+          last_seen_at?: string | null
+          status?: Database["public"]["Enums"]["device_status"] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dispositivos_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      historico_ativacoes: {
+        Row: {
+          action: string
+          cliente_id: string | null
+          created_at: string | null
+          details: Json | null
+          dispositivo_id: string | null
+          id: string
+          lista_id: string | null
+        }
+        Insert: {
+          action: string
+          cliente_id?: string | null
+          created_at?: string | null
+          details?: Json | null
+          dispositivo_id?: string | null
+          id?: string
+          lista_id?: string | null
+        }
+        Update: {
+          action?: string
+          cliente_id?: string | null
+          created_at?: string | null
+          details?: Json | null
+          dispositivo_id?: string | null
+          id?: string
+          lista_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "historico_ativacoes_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "historico_ativacoes_dispositivo_id_fkey"
+            columns: ["dispositivo_id"]
+            isOneToOne: false
+            referencedRelation: "dispositivos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "historico_ativacoes_lista_id_fkey"
+            columns: ["lista_id"]
+            isOneToOne: false
+            referencedRelation: "listas_iptv"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      listas_iptv: {
+        Row: {
+          cliente_id: string | null
+          created_at: string | null
+          id: string
+          nome: string
+          senha: string
+          status: string | null
+          updated_at: string | null
+          url: string
+          usuario: string
+          vencimento: string | null
+        }
+        Insert: {
+          cliente_id?: string | null
+          created_at?: string | null
+          id?: string
+          nome: string
+          senha: string
+          status?: string | null
+          updated_at?: string | null
+          url: string
+          usuario: string
+          vencimento?: string | null
+        }
+        Update: {
+          cliente_id?: string | null
+          created_at?: string | null
+          id?: string
+          nome?: string
+          senha?: string
+          status?: string | null
+          updated_at?: string | null
+          url?: string
+          usuario?: string
+          vencimento?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listas_iptv_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          role: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id: string
+          role?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          role?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +308,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      device_status: "pending" | "active" | "expired" | "blocked" | "revoked"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +435,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      device_status: ["pending", "active", "expired", "blocked", "revoked"],
+    },
   },
 } as const
