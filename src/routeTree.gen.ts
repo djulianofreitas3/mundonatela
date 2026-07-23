@@ -18,9 +18,9 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AtivacoesRouteImport } from './routes/ativacoes'
 import { Route as AdminsRouteImport } from './routes/admins'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiPublicDeviceRequestCodeRouteImport } from './routes/api.public.device.request-code'
-import { Route as ApiPublicDeviceRegisterRouteImport } from './routes/api.public.device.register'
-import { Route as ApiPublicDeviceCheckRouteImport } from './routes/api.public.device.check'
+import { Route as ApiPublicDeviceRequestCodeRouteImport } from './routes/api/public/device/request-code'
+import { Route as ApiPublicDeviceRegisterRouteImport } from './routes/api/public/device/register'
+import { Route as ApiPublicDeviceCheckRouteImport } from './routes/api/public/device/check'
 
 const ListasRoute = ListasRouteImport.update({
   id: '/listas',
