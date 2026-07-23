@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/api/public/device/register")({
   server: {
     handlers: {
-      POST: async ({ request }) => {
+      POST: async ({ request }: { request: Request }) => {
         try {
           const body = await request.json();
           const schema = z.object({
@@ -17,7 +17,6 @@ export const Route = createFileRoute("/api/public/device/register")({
 
           const { installation_id, device_name, android_version, app_version } = schema.parse(body);
 
-          // Get or create device
           const { data: device, error: deviceError } = await supabase
             .from("dispositivos")
             .upsert(
@@ -35,7 +34,6 @@ export const Route = createFileRoute("/api/public/device/register")({
 
           if (deviceError) throw deviceError;
 
-          // Check if active code already exists and is valid
           const { data: existingCode } = await supabase
             .from("codigos_ativacao")
             .select()
@@ -51,7 +49,6 @@ export const Route = createFileRoute("/api/public/device/register")({
             }), { headers: { "Content-Type": "application/json" } });
           }
 
-          // Generate new code: 8 chars alphanumeric like A7K9-3X2P
           const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
           const genPart = () => Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
           const code = `${genPart()}-${genPart()}`;
@@ -74,7 +71,6 @@ export const Route = createFileRoute("/api/public/device/register")({
           }), { headers: { "Content-Type": "application/json" } });
 
         } catch (error: any) {
-          console.error("Register error:", error);
           return new Response(JSON.stringify({ error: error.message || "Internal server error" }), { 
             status: 400,
             headers: { "Content-Type": "application/json" }
