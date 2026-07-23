@@ -59,9 +59,15 @@ function Lists() {
     mutationFn: (data: ListFormData) => createListFn({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["lists"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
       setIsModalOpen(false);
       reset();
+      toast.success("Lista Xtream salva com sucesso!");
     },
+    onError: (err: any) => {
+      toast.error(`Falha ao salvar lista: ${err.message}`);
+    }
+
   });
 
   const testMutation = useMutation({
