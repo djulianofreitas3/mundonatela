@@ -86,7 +86,11 @@ function Lists() {
       if (result.success) {
         toast.success("Conexão estabelecida com sucesso!");
       } else {
-        toast.warning(result.message);
+        if (result.status === 403) {
+          toast.info("Bloqueio de datacenter detectado.");
+        } else {
+          toast.warning(result.message);
+        }
       }
     },
     onError: (err: any) => {
