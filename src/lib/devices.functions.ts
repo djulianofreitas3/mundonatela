@@ -48,7 +48,6 @@ export const getPendingActivations = createServerFn({ method: "GET" })
         dispositivo:dispositivos(id, device_name, installation_id)
       `)
       .is("used_at", null)
-      .gt("expires_at", new Date().toISOString())
       .order("created_at", { ascending: false });
 
     if (error) throw error;
@@ -62,7 +61,7 @@ export const activateDeviceAction = createServerFn({ method: "POST" })
       code: z.string().optional(), // Added for manual activation
       cliente_id: z.string().uuid(),
       lista_id: z.string().uuid(),
-      expires_at: z.string(),
+      expires_at: z.string().nullable(),
       observacao: z.string().optional(),
     }).parse(data)
   )
@@ -83,8 +82,8 @@ export const activateDeviceAction = createServerFn({ method: "POST" })
         .single();
 
       if (findErr || !foundCode) throw new Error("Código inexistente.");
-      if (foundCode.used_at) throw new Error("Código já utilizado.");
-      if (new Date(foundCode.expires_at) < new Date()) throw new Error("Código expirado.");
+      if (foundCode.used_at) throw new Error("Código já processado.");
+      if (foundCode.expires_at && new Date(foundCode.expires_at) < new Date()) throw new Error("Código expirado.");
       
       targetCodeId = foundCode.id;
       dispositivoId = (foundCode.dispositivo as any)?.id;
@@ -98,7 +97,7 @@ export const activateDeviceAction = createServerFn({ method: "POST" })
         .eq("id", targetCodeId)
         .single();
       
-      if (codeErr || !code || code.used_at) throw new Error("Código inválido ou já utilizado.");
+      if (codeErr || !code || code.used_at) throw new Error("Código inválido ou já processado.");
       dispositivoId = (code.dispositivo as any).id;
     }
 
