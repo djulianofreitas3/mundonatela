@@ -63,18 +63,25 @@ Route.options.server = {
         // If device is removed or blocked, we deny access
         if (['removed', 'blocked'].includes(device.status as string)) {
           return new Response(JSON.stringify({ 
-            status: device.status,
+            status: 'bloqueado',
             expires_at: null,
             config: null 
           }), { status: 200, headers: { 'Content-Type': 'application/json' } })
         }
 
         if (device.status === 'active' && device.device_token !== tokenToVerify) {
-          return new Response(JSON.stringify({ error: 'Unauthorized', status: 'blocked' }), { status: 401 })
+          return new Response(JSON.stringify({ error: 'Unauthorized', status: 'bloqueado' }), { status: 401 })
         }
 
         const isExpired = device.expires_at ? new Date(device.expires_at) < new Date() : false
-        const effectiveStatus = isExpired ? 'expired' : device.status
+        const statusMap: Record<string, string> = {
+          'active': 'ativo',
+          'pending': 'pendente',
+          'expired': 'expirado',
+          'blocked': 'bloqueado',
+          'removed': 'bloqueado'
+        }
+        const effectiveStatus = isExpired ? 'expirado' : (statusMap[device.status as string] || device.status)
 
         await supabaseAdmin
           .from('dispositivos')
@@ -84,7 +91,7 @@ Route.options.server = {
         return new Response(JSON.stringify({
           status: effectiveStatus,
           expires_at: device.expires_at,
-          config: effectiveStatus === 'active' ? {
+          config: effectiveStatus === 'ativo' ? {
             client_name: (device.cliente as any)?.nome,
             lists: (device.listas as any[]).map(l => ({
               name: l.lista.nome,

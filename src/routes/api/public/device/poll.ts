@@ -33,18 +33,18 @@ Route.options.server = {
           .single()
 
         if (codeErr || !codeData) {
-          return new Response(JSON.stringify({ status: 'rejected', error: 'Request not found' }), { status: 404 })
+          return new Response(JSON.stringify({ status: 'rejeitado', error: 'Request not found' }), { status: 404 })
         }
 
         // Validate poll_token manually to provide better error but keep security
         if (codeData.poll_token !== poll_token) {
-           return new Response(JSON.stringify({ status: 'rejected', error: 'Invalid poll token' }), { status: 401 })
+           return new Response(JSON.stringify({ status: 'rejeitado', error: 'Invalid poll token' }), { status: 401 })
         }
 
         const isExpired = codeData.expires_at ? new Date(codeData.expires_at) < new Date() : false
         
         if (isExpired && !codeData.used_at) {
-          return new Response(JSON.stringify({ status: 'expired' }), { status: 200 })
+          return new Response(JSON.stringify({ status: 'expirado' }), { status: 200 })
         }
 
         if (codeData.used_at) {
@@ -55,19 +55,26 @@ Route.options.server = {
             .eq('installation_id', codeData.installation_id)
             .single()
 
-          if (devErr || !device) return new Response(JSON.stringify({ status: 'rejected' }), { status: 200 })
+          if (devErr || !device) return new Response(JSON.stringify({ status: 'rejeitado' }), { status: 200 })
           
           if (device.status === 'active') {
             return new Response(JSON.stringify({ 
-              status: 'approved',
+              status: 'aprovado',
               device_token: device.device_token
             }), { status: 200 })
           }
 
-          return new Response(JSON.stringify({ status: device.status }), { status: 200 })
+          const statusMap: Record<string, string> = {
+            'active': 'ativo',
+            'pending': 'pendente',
+            'expired': 'expirado',
+            'blocked': 'bloqueado',
+            'removed': 'bloqueado'
+          }
+          return new Response(JSON.stringify({ status: statusMap[device.status as string] || device.status }), { status: 200 })
         }
 
-        return new Response(JSON.stringify({ status: 'pending' }), { status: 200 })
+        return new Response(JSON.stringify({ status: 'pendente' }), { status: 200 })
       } catch (err: any) {
         return new Response(JSON.stringify({ error: err.message }), { status: 500 })
       }
