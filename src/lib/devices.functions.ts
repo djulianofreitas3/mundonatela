@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const getDevices = createServerFn({ method: "GET" })
   .handler(async () => {
@@ -17,6 +18,7 @@ export const getDevices = createServerFn({ method: "GET" })
   });
 
 export const updateDevice = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: unknown) => 
     z.object({
       id: z.string().uuid(),
@@ -26,17 +28,10 @@ export const updateDevice = createServerFn({ method: "POST" })
       device_token: z.string().nullable().optional(),
     }).parse(data)
   )
-  .handler(async ({ data: { id, ...input } }) => {
+  .handler(async ({ data: { id, ...input }, context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { requireSupabaseAuth } = await import("@/integrations/supabase/auth-middleware");
     
-    // Validate session
-    const authContext = await requireSupabaseAuth();
-    // In TanStack Start v1, requireSupabaseAuth is often used as .middleware()
-    // but here we call it inside the handler to get the userId safely.
-    // If it's a server function middleware, it's typically passed via context.
-    
-    const userId = authContext.userId;
+    const userId = context.userId;
     if (!userId) throw new Error("Não autorizado.");
 
     const updateData: any = { ...input };
@@ -59,6 +54,7 @@ export const updateDevice = createServerFn({ method: "POST" })
   });
 
 export const cancelActivationRequest = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: unknown) => 
     z.object({
       id: z.string().uuid(),
@@ -67,10 +63,7 @@ export const cancelActivationRequest = createServerFn({ method: "POST" })
   )
   .handler(async ({ data: { id } }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { requireSupabaseAuth } = await import("@/integrations/supabase/auth-middleware");
     
-    await requireSupabaseAuth();
-
     const { error } = await supabaseAdmin
       .from("codigos_ativacao")
       .update({ 
@@ -84,13 +77,11 @@ export const cancelActivationRequest = createServerFn({ method: "POST" })
   });
 
 export const deleteActivationRequest = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: unknown) => z.object({ id: z.string().uuid() }).parse(data))
   .handler(async ({ data: { id } }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { requireSupabaseAuth } = await import("@/integrations/supabase/auth-middleware");
     
-    await requireSupabaseAuth();
-
     const { error } = await supabaseAdmin
       .from("codigos_ativacao")
       .delete()
