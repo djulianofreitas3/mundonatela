@@ -1,0 +1,1 @@
+UPDATE dispositivos SET status = 'removed', removed_at = now() WHERE installation_id IN ('test2-uuid', 'test-uuid-1234', 'test-device-1784839084', 'test-device-uuid-12345', 'TEST_DEVICE_123', 'test_device_123');
