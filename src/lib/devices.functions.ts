@@ -20,16 +20,18 @@ export const updateDevice = createServerFn({ method: "POST" })
   .validator((data: unknown) => 
     z.object({
       id: z.string().uuid(),
-      status: z.enum(['pending', 'active', 'expired', 'blocked', 'revoked']).optional(),
-      expires_at: z.string().optional(),
+      status: z.enum(['pending', 'active', 'expired', 'blocked', 'revoked', 'removed']).optional(),
+      expires_at: z.string().nullable().optional(),
       cliente_id: z.string().uuid().nullable().optional(),
+      removed_at: z.string().nullable().optional(),
+      removed_by: z.string().uuid().nullable().optional(),
     }).parse(data)
   )
   .handler(async ({ data: { id, ...input } }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin
       .from("dispositivos")
-      .update(input)
+      .update(input as any)
       .eq("id", id)
       .select()
       .single();
