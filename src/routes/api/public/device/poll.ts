@@ -28,13 +28,17 @@ Route.options.server = {
 
         const { data: codeData, error: codeErr } = await supabaseAdmin
           .from('codigos_ativacao')
-          .select('used_at, expires_at, installation_id')
+          .select('used_at, expires_at, installation_id, poll_token')
           .eq('request_id', request_id)
-          .eq('poll_token', poll_token)
           .single()
 
         if (codeErr || !codeData) {
-          return new Response(JSON.stringify({ status: 'rejected', error: 'Request not found or invalid tokens' }), { status: 404 })
+          return new Response(JSON.stringify({ status: 'rejected', error: 'Request not found' }), { status: 404 })
+        }
+
+        // Validate poll_token manually to provide better error but keep security
+        if (codeData.poll_token !== poll_token) {
+           return new Response(JSON.stringify({ status: 'rejected', error: 'Invalid poll token' }), { status: 401 })
         }
 
         const isExpired = codeData.expires_at ? new Date(codeData.expires_at) < new Date() : false
