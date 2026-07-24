@@ -137,6 +137,8 @@ export type Database = {
           id: string
           installation_id: string
           last_seen_at: string | null
+          removed_at: string | null
+          removed_by: string | null
           status: Database["public"]["Enums"]["device_status"] | null
           updated_at: string | null
         }
@@ -152,6 +154,8 @@ export type Database = {
           id?: string
           installation_id: string
           last_seen_at?: string | null
+          removed_at?: string | null
+          removed_by?: string | null
           status?: Database["public"]["Enums"]["device_status"] | null
           updated_at?: string | null
         }
@@ -167,6 +171,8 @@ export type Database = {
           id?: string
           installation_id?: string
           last_seen_at?: string | null
+          removed_at?: string | null
+          removed_by?: string | null
           status?: Database["public"]["Enums"]["device_status"] | null
           updated_at?: string | null
         }
