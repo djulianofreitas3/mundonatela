@@ -21,7 +21,7 @@ export function ActivationModal({ isOpen, onClose, initialCode = "", activationC
   const [form, setForm] = useState({
     cliente_id: "",
     lista_id: "",
-    expires_at: "", // No longer required
+    expires_at: format(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), "yyyy-MM-dd"),
     observacao: ""
   });
 
@@ -63,7 +63,7 @@ export function ActivationModal({ isOpen, onClose, initialCode = "", activationC
       code: activationCodeId ? undefined : code,
       cliente_id: form.cliente_id,
       lista_id: form.lista_id,
-      expires_at: form.expires_at ? new Date(form.expires_at).toISOString() : null,
+      expires_at: new Date(form.expires_at).toISOString(),
       observacao: form.observacao
     });
   };
@@ -148,9 +148,10 @@ export function ActivationModal({ isOpen, onClose, initialCode = "", activationC
           <div className="space-y-2">
             <label className="text-sm font-semibold flex items-center gap-2">
               <Calendar size={16} className="text-muted-foreground" />
-              Vencimento (Opcional - Vazio = Permanente)
+              Data de Vencimento
             </label>
             <input
+              required
               type="date"
               className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary/50"
               value={form.expires_at}

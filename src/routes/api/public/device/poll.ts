@@ -37,7 +37,7 @@ Route.options.server = {
           return new Response(JSON.stringify({ status: 'rejected', error: 'Request not found or invalid tokens' }), { status: 404 })
         }
 
-        const isExpired = codeData.expires_at ? new Date(codeData.expires_at) < new Date() : false
+        const isExpired = new Date(codeData.expires_at) < new Date()
         
         if (isExpired && !codeData.used_at) {
           return new Response(JSON.stringify({ status: 'expired' }), { status: 200 })

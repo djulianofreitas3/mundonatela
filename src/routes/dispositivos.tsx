@@ -116,15 +116,13 @@ function Devices() {
                         {device.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm font-medium">
+                    <td className="px-6 py-4 text-sm">
                       {device.expires_at ? (
-                        <div className="flex items-center gap-1 text-yellow-700">
-                          <Calendar size={14} />
+                        <div className="flex items-center gap-1">
+                          <Calendar size={14} className="text-muted-foreground" />
                           {format(new Date(device.expires_at), "dd/MM/yyyy")}
                         </div>
-                      ) : (
-                        <span className="text-green-600 font-bold uppercase text-[10px]">Permanente</span>
-                      )}
+                      ) : "-"}
                     </td>
                     <td className="px-6 py-4 text-sm text-muted-foreground">
                       {device.last_seen_at ? (

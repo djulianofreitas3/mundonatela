@@ -2,7 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Layout } from "@/components/layout/Layout";
 import { useState } from "react";
-import { Search, Check, List as ListIcon, Loader2, Clock, Smartphone, Plus, ShieldCheck } from "lucide-react";
+import { Search, Check, List as ListIcon, Loader2, Clock, Smartphone, Plus } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getPendingActivations } from "@/lib/devices.functions";
 import { format, differenceInMinutes, parseISO } from "date-fns";
@@ -46,7 +46,7 @@ function PendingActivations() {
   ) : [];
 
   return (
-    <Layout title="Aguardando Aprovação">
+    <Layout title="Ativações Pendentes">
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="relative flex-1 max-w-md">
@@ -79,13 +79,13 @@ function PendingActivations() {
                   <th className="px-6 py-4">Código</th>
                   <th className="px-6 py-4">Dispositivo</th>
                   <th className="px-6 py-4">Solicitação</th>
-                  <th className="px-6 py-4">Status da Validade</th>
+                  <th className="px-6 py-4">Expira em</th>
                   <th className="px-6 py-4 text-right">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {filteredActivations.map((item: any) => {
-                  const isPermanent = !item.expires_at;
+                  const minsRemaining = differenceInMinutes(parseISO(item.expires_at), new Date());
                   return (
                     <tr 
                       key={item.id} 
@@ -108,10 +108,10 @@ function PendingActivations() {
                       </td>
                       <td className="px-6 py-4">
                         <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${
-                          isPermanent ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-yellow-100 text-yellow-800 border border-yellow-200'
+                          minsRemaining < 5 ? 'bg-red-100 text-red-800 animate-pulse border border-red-200' : 'bg-yellow-100 text-yellow-800 border border-yellow-200'
                         }`}>
-                          <ShieldCheck size={12} className="mr-1.5" />
-                          {isPermanent ? "Código sem vencimento" : "Vence em breve"}
+                          <Clock size={12} className="mr-1.5" />
+                          {minsRemaining} min
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
