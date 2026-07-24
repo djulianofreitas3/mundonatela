@@ -5,9 +5,10 @@ import { useState } from "react";
 import { Search, Check, List as ListIcon, Loader2, Clock, Smartphone, Plus, ShieldCheck, XCircle, Trash2 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPendingActivations, cancelActivationRequest, deleteActivationRequest } from "@/lib/devices.functions";
-import { format, differenceInMinutes, parseISO } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { ActivationModal } from "@/components/ActivationModal";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/ativacoes")({
   beforeLoad: async () => {
