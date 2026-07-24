@@ -33,18 +33,18 @@ Route.options.server = {
           .single()
 
         if (codeErr || !codeData) {
-          return new Response(JSON.stringify({ status: 'rejeitado', error: 'Request not found' }), { status: 404 })
+          return new Response(JSON.stringify({ status: 'rejeitado', error: 'Request not found' }), { status: 404, headers: { 'Content-Type': 'application/json' } })
         }
 
         // Validate poll_token manually to provide better error but keep security
         if (codeData.poll_token !== poll_token) {
-           return new Response(JSON.stringify({ status: 'rejeitado', error: 'Invalid poll token' }), { status: 401 })
+           return new Response(JSON.stringify({ status: 'rejeitado', error: 'Invalid poll token' }), { status: 401, headers: { 'Content-Type': 'application/json' } })
         }
 
         const isExpired = codeData.expires_at ? new Date(codeData.expires_at) < new Date() : false
         
         if (isExpired && !codeData.used_at) {
-          return new Response(JSON.stringify({ status: 'expirado' }), { status: 200 })
+          return new Response(JSON.stringify({ status: 'expirado' }), { status: 200, headers: { 'Content-Type': 'application/json' } })
         }
 
         if (codeData.used_at) {
@@ -61,7 +61,7 @@ Route.options.server = {
             return new Response(JSON.stringify({ 
               status: 'aprovado',
               device_token: device.device_token
-            }), { status: 200 })
+            }), { status: 200, headers: { 'Content-Type': 'application/json' } })
           }
 
           const statusMap: Record<string, string> = {
@@ -71,10 +71,10 @@ Route.options.server = {
             'blocked': 'bloqueado',
             'removed': 'bloqueado'
           }
-          return new Response(JSON.stringify({ status: statusMap[device.status as string] || device.status }), { status: 200 })
+          return new Response(JSON.stringify({ status: statusMap[device.status as string] || device.status }), { status: 200, headers: { 'Content-Type': 'application/json' } })
         }
 
-        return new Response(JSON.stringify({ status: 'pendente' }), { status: 200 })
+        return new Response(JSON.stringify({ status: 'pendente' }), { status: 200, headers: { 'Content-Type': 'application/json' } })
       } catch (err: any) {
         return new Response(JSON.stringify({ error: err.message }), { status: 500 })
       }
