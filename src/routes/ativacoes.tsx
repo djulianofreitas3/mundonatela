@@ -2,9 +2,9 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Layout } from "@/components/layout/Layout";
 import { useState } from "react";
-import { Search, Check, List as ListIcon, Loader2, Clock, Smartphone, Plus, ShieldCheck } from "lucide-react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getPendingActivations } from "@/lib/devices.functions";
+import { Search, Check, List as ListIcon, Loader2, Clock, Smartphone, Plus, ShieldCheck, XCircle, Trash2 } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getPendingActivations, cancelActivationRequest, deleteActivationRequest } from "@/lib/devices.functions";
 import { format, differenceInMinutes, parseISO } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { ActivationModal } from "@/components/ActivationModal";
@@ -29,6 +29,24 @@ function PendingActivations() {
 
   const queryClient = useQueryClient();
   const getActivationsFn = useServerFn(getPendingActivations);
+  const cancelActivationFn = useServerFn(cancelActivationRequest);
+  const deleteActivationFn = useServerFn(deleteActivationRequest);
+
+  const cancelMutation = useMutation({
+    mutationFn: (id: string) => cancelActivationFn({ data: { id, status: 'cancelled' } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["pending-activations"] });
+      toast.success("Solicitação cancelada.");
+    }
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteActivationFn({ data: { id } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["pending-activations"] });
+      toast.success("Solicitação excluída.");
+    }
+  });
 
   const { data: activations = [], isLoading } = useQuery({
     queryKey: ["pending-activations"],
@@ -114,14 +132,41 @@ function PendingActivations() {
                           {isPermanent ? "Código sem vencimento" : "Vence em breve"}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-right">
-                        <button 
-                          onClick={() => handleOpenActivation(item)}
-                          className="bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 ml-auto"
-                        >
-                          <Check size={14} />
-                          ATIVAR
-                        </button>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-end gap-2">
+                          <button 
+                            onClick={() => handleOpenActivation(item)}
+                            className="bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2"
+                            title="Ativar"
+                          >
+                            <Check size={14} />
+                            ATIVAR
+                          </button>
+                          
+                          <button 
+                            onClick={() => {
+                              if (confirm("Deseja cancelar esta solicitação?")) {
+                                cancelMutation.mutate(item.id);
+                              }
+                            }}
+                            className="p-2 hover:bg-orange-50 text-orange-600 rounded-lg transition-colors"
+                            title="Cancelar"
+                          >
+                            <XCircle size={18} />
+                          </button>
+
+                          <button 
+                            onClick={() => {
+                              if (confirm("Excluir permanentemente esta solicitação de teste?")) {
+                                deleteMutation.mutate(item.id);
+                              }
+                            }}
+                            className="p-2 hover:bg-red-50 text-red-500 rounded-lg transition-colors"
+                            title="Excluir (Admin)"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );

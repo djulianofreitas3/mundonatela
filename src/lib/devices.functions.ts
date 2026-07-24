@@ -24,21 +24,77 @@ export const updateDevice = createServerFn({ method: "POST" })
       expires_at: z.string().nullable().optional(),
       cliente_id: z.string().uuid().nullable().optional(),
       device_token: z.string().nullable().optional(),
-      removed_at: z.string().nullable().optional(),
-      removed_by: z.string().uuid().nullable().optional(),
+      // removed_at and removed_by are no longer accepted from client for security
     }).parse(data)
   )
   .handler(async ({ data: { id, ...input } }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { requireSupabaseAuth } = await import("@/integrations/supabase/auth-middleware");
+    
+    // Validate session for any update
+    const { userId } = await requireSupabaseAuth();
+    if (!userId) throw new Error("Não autorizado.");
+
+    const updateData: any = { ...input };
+
+    // If status is being set to removed, inject server-side audit data
+    if (input.status === 'removed') {
+      updateData.removed_at = new Date().toISOString();
+      updateData.removed_by = userId;
+      updateData.device_token = null; // Ensure token is revoked
+    }
+
     const { data, error } = await supabaseAdmin
       .from("dispositivos")
-      .update(input as any)
+      .update(updateData)
       .eq("id", id)
       .select()
       .single();
 
     if (error) throw error;
     return data;
+  });
+
+export const cancelActivationRequest = createServerFn({ method: "POST" })
+  .validator((data: unknown) => 
+    z.object({
+      id: z.string().uuid(),
+      status: z.enum(['rejected', 'cancelled']),
+    }).parse(data)
+  )
+  .handler(async ({ data: { id, status } }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { requireSupabaseAuth } = await import("@/integrations/supabase/auth-middleware");
+    
+    await requireSupabaseAuth();
+
+    const { error } = await supabaseAdmin
+      .from("codigos_ativacao")
+      .update({ 
+        used_at: new Date().toISOString(), // Mark as used so it disappears from pending
+        poll_token: null // Invalidate token
+      })
+      .eq("id", id);
+
+    if (error) throw error;
+    return { success: true };
+  });
+
+export const deleteActivationRequest = createServerFn({ method: "POST" })
+  .validator((data: unknown) => z.object({ id: z.string().uuid() }).parse(data))
+  .handler(async ({ data: { id } }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { requireSupabaseAuth } = await import("@/integrations/supabase/auth-middleware");
+    
+    await requireSupabaseAuth();
+
+    const { error } = await supabaseAdmin
+      .from("codigos_ativacao")
+      .delete()
+      .eq("id", id);
+
+    if (error) throw error;
+    return { success: true };
   });
 
 export const getPendingActivations = createServerFn({ method: "GET" })

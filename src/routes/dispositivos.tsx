@@ -80,15 +80,10 @@ function Devices() {
   const handleRemoveDevice = async () => {
     if (!deviceToRemove) return;
     
-    const { data: { session } } = await supabase.auth.getSession();
-    
     updateMutation.mutate({ 
       id: deviceToRemove.id, 
       status: 'removed',
       cliente_id: null,
-      device_token: null, // Revoga o token
-      removed_at: new Date().toISOString(),
-      removed_by: session?.user?.id
     }, {
       onSuccess: () => {
         setDeviceToRemove(null);
