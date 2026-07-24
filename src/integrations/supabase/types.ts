@@ -320,7 +320,13 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      device_status: "pending" | "active" | "expired" | "blocked" | "revoked"
+      device_status:
+        | "pending"
+        | "active"
+        | "expired"
+        | "blocked"
+        | "revoked"
+        | "removed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -448,7 +454,14 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      device_status: ["pending", "active", "expired", "blocked", "revoked"],
+      device_status: [
+        "pending",
+        "active",
+        "expired",
+        "blocked",
+        "revoked",
+        "removed",
+      ],
     },
   },
 } as const
