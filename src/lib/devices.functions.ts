@@ -31,7 +31,7 @@ export const updateDevice = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin
       .from("dispositivos")
-      .update(input)
+      .update(input as any)
       .eq("id", id)
       .select()
       .single();
