@@ -60,6 +60,15 @@ Route.options.server = {
         const { data: device, error } = await query
         if (error || !device) return new Response(JSON.stringify({ error: 'Device not found' }), { status: 404 })
 
+        // If device is removed or blocked, we deny access
+        if (['removed', 'blocked'].includes(device.status as string)) {
+          return new Response(JSON.stringify({ 
+            status: device.status,
+            expires_at: null,
+            config: null 
+          }), { status: 200, headers: { 'Content-Type': 'application/json' } })
+        }
+
         if (device.status === 'active' && device.device_token !== tokenToVerify) {
           return new Response(JSON.stringify({ error: 'Unauthorized', status: 'blocked' }), { status: 401 })
         }
