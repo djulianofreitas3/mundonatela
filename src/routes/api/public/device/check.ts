@@ -39,8 +39,8 @@ Route.options.server = {
           return new Response(JSON.stringify({ error: 'Invalid input' }), { status: 400 })
         }
 
-        if (!result.data) return new Response(JSON.stringify({ error: 'installation_id required' }), { status: 400 })
-        const { installation_id } = result.data
+        if (!result.data && !tokenToVerify) return new Response(JSON.stringify({ error: 'installation_id or token required' }), { status: 400 })
+        const installation_id = result.data?.installation_id
 
         const query = supabaseAdmin
           .from('dispositivos')
@@ -54,7 +54,7 @@ Route.options.server = {
               lista:listas_iptv(nome, url, usuario, senha, status)
             )
           `)
-          .eq('installation_id', installation_id)
+          .eq(installation_id ? 'installation_id' : 'device_token', installation_id || tokenToVerify)
           .single()
 
         const { data: device, error } = await query

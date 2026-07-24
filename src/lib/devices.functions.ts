@@ -175,7 +175,10 @@ export const activateDeviceAction = createServerFn({ method: "POST" })
     if (targetCodeId) {
       await supabaseAdmin
         .from("codigos_ativacao")
-        .update({ used_at: new Date().toISOString() })
+        .update({ 
+          used_at: new Date().toISOString()
+          // We NO LONGER nullify poll_token here so the device can finish polling
+        })
         .eq("id", targetCodeId);
     }
 
