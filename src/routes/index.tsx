@@ -1,12 +1,5 @@
-// Auditoria realizada: Erro 403 no teste de conexão resolvido.
-// 1. URL: Preservada integralmente com protocolo e porta.
-// 2. Endereço: Testado via backend (server function) para evitar CORS.
-// 3. Endpoint: <URL>/player_api.php?username=<USER>&password=<PASS>
-// 4. Barras: Removidas do final da URL base para evitar duplicidade.
-// 5. Redirecionamento: Configurado como 'follow'.
-// 6. Timeout: Aumentado para 15s.
-// 7. Bloqueio: IPs de datacenters (como o da Cloudflare/Lovable) costumam ser bloqueados por alguns provedores, resultando em 403.
-// 8. Tratamento: 403 agora exibe mensagem explicativa sem invalidar os dados da lista.
+// Painel administrativo web para gerenciamento de dispositivos e ativação de aplicativo Android IPTV.
+
 
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
