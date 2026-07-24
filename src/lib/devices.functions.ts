@@ -84,7 +84,7 @@ export const activateDeviceAction = createServerFn({ method: "POST" })
 
       if (findErr || !foundCode) throw new Error("Código inexistente.");
       if (foundCode.used_at) throw new Error("Código já utilizado.");
-      if (new Date(foundCode.expires_at) < new Date()) throw new Error("Código expirado.");
+      if (foundCode.expires_at && new Date(foundCode.expires_at) < new Date()) throw new Error("Código expirado.");
       
       targetCodeId = foundCode.id;
       dispositivoId = (foundCode.dispositivo as any)?.id;

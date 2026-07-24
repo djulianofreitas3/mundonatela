@@ -51,7 +51,7 @@ export type Database = {
         Row: {
           code: string
           created_at: string | null
-          expires_at: string
+          expires_at: string | null
           id: string
           installation_id: string
           poll_token: string | null
@@ -61,7 +61,7 @@ export type Database = {
         Insert: {
           code: string
           created_at?: string | null
-          expires_at?: string
+          expires_at?: string | null
           id?: string
           installation_id: string
           poll_token?: string | null
@@ -71,7 +71,7 @@ export type Database = {
         Update: {
           code?: string
           created_at?: string | null
-          expires_at?: string
+          expires_at?: string | null
           id?: string
           installation_id?: string
           poll_token?: string | null
@@ -137,6 +137,8 @@ export type Database = {
           id: string
           installation_id: string
           last_seen_at: string | null
+          removed_at: string | null
+          removed_by: string | null
           status: Database["public"]["Enums"]["device_status"] | null
           updated_at: string | null
         }
@@ -152,6 +154,8 @@ export type Database = {
           id?: string
           installation_id: string
           last_seen_at?: string | null
+          removed_at?: string | null
+          removed_by?: string | null
           status?: Database["public"]["Enums"]["device_status"] | null
           updated_at?: string | null
         }
@@ -167,6 +171,8 @@ export type Database = {
           id?: string
           installation_id?: string
           last_seen_at?: string | null
+          removed_at?: string | null
+          removed_by?: string | null
           status?: Database["public"]["Enums"]["device_status"] | null
           updated_at?: string | null
         }
@@ -314,7 +320,13 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      device_status: "pending" | "active" | "expired" | "blocked" | "revoked"
+      device_status:
+        | "pending"
+        | "active"
+        | "expired"
+        | "blocked"
+        | "revoked"
+        | "removed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -442,7 +454,14 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      device_status: ["pending", "active", "expired", "blocked", "revoked"],
+      device_status: [
+        "pending",
+        "active",
+        "expired",
+        "blocked",
+        "revoked",
+        "removed",
+      ],
     },
   },
 } as const
