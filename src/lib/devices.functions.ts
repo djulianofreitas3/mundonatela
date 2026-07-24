@@ -23,6 +23,7 @@ export const updateDevice = createServerFn({ method: "POST" })
       status: z.enum(['pending', 'active', 'expired', 'blocked', 'revoked', 'removed']).optional(),
       expires_at: z.string().nullable().optional(),
       cliente_id: z.string().uuid().nullable().optional(),
+      device_token: z.string().nullable().optional(),
       removed_at: z.string().nullable().optional(),
       removed_by: z.string().uuid().nullable().optional(),
     }).parse(data)
