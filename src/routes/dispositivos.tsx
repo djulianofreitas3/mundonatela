@@ -2,22 +2,12 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Layout } from "@/components/layout/Layout";
 import { useState } from "react";
-import { Search, Monitor, Calendar, ShieldCheck, ShieldX, RefreshCw, Unlink, Loader2, Clock, Trash2, AlertTriangle } from "lucide-react";
+import { Search, Monitor, Calendar, ShieldCheck, ShieldX, RefreshCw, Unlink, Loader2, Clock } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getDevices, updateDevice } from "@/lib/devices.functions";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/dispositivos")({
   beforeLoad: async () => {
@@ -34,7 +24,6 @@ export const Route = createFileRoute("/dispositivos")({
 
 function Devices() {
   const [search, setSearch] = useState("");
-  const [deviceToRemove, setDeviceToRemove] = useState<any>(null);
   const queryClient = useQueryClient();
 
   const getDevicesFn = useServerFn(getDevices);
@@ -59,11 +48,9 @@ function Devices() {
 
 
   const filteredDevices = Array.isArray(devices) ? devices.filter((d: any) => 
-    d.status !== 'removed' && (
-      (d.device_name?.toLowerCase().includes(search.toLowerCase())) ||
-      (d.cliente?.nome?.toLowerCase().includes(search.toLowerCase())) ||
-      (d.installation_id.includes(search))
-    )
+    (d.device_name?.toLowerCase().includes(search.toLowerCase())) ||
+    (d.cliente?.nome?.toLowerCase().includes(search.toLowerCase())) ||
+    (d.installation_id.includes(search))
   ) : [];
 
   const getStatusColor = (status: string) => {
@@ -71,30 +58,9 @@ function Devices() {
       case 'active': return 'bg-green-100 text-green-800';
       case 'pending': return 'bg-yellow-100 text-yellow-800';
       case 'blocked': return 'bg-red-100 text-red-800';
-      case 'removed': return 'bg-gray-100 text-gray-800 italic';
       case 'expired': return 'bg-gray-100 text-gray-800';
       default: return 'bg-muted text-muted-foreground';
     }
-  };
-
-  const handleRemoveDevice = async () => {
-    if (!deviceToRemove) return;
-    
-    updateMutation.mutate({ 
-      id: deviceToRemove.id, 
-      status: 'removed',
-      cliente_id: null,
-    }, {
-      onSuccess: () => {
-        setDeviceToRemove(null);
-        toast.success("Dispositivo removido com sucesso");
-      }
-    });
-  };
-
-  const maskId = (id: string) => {
-    if (id.length <= 8) return id;
-    return id.substring(0, 4) + "****" + id.substring(id.length - 4);
   };
 
   return (
@@ -197,13 +163,6 @@ function Devices() {
                         >
                           <Unlink size={18} />
                         </button>
-                        <button 
-                          onClick={() => setDeviceToRemove(device)}
-                          className="p-2 hover:bg-red-50 text-red-500 rounded-lg transition-colors" 
-                          title="Remover Dispositivo"
-                        >
-                          <Trash2 size={18} />
-                        </button>
                       </div>
                     </td>
                   </tr>
@@ -216,46 +175,6 @@ function Devices() {
           </div>
         </div>
       )}
-
-      <AlertDialog open={!!deviceToRemove} onOpenChange={(open) => !open && setDeviceToRemove(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="text-red-500" />
-              Remover Dispositivo
-            </AlertDialogTitle>
-            <AlertDialogDescription className="space-y-4">
-              <p>
-                Deseja realmente remover este dispositivo? O acesso será revogado imediatamente e será necessária uma nova ativação no aparelho.
-              </p>
-              
-              <div className="bg-muted p-3 rounded-lg text-sm space-y-1">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Aparelho:</span>
-                  <span className="font-medium">{deviceToRemove?.device_name || "Desconhecido"}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Cliente:</span>
-                  <span className="font-medium">{deviceToRemove?.cliente?.nome || "Não vinculado"}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">ID:</span>
-                  <span className="font-mono text-[10px]">{deviceToRemove ? maskId(deviceToRemove.installation_id) : ""}</span>
-                </div>
-              </div>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handleRemoveDevice}
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              Remover dispositivo
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </Layout>
   );
 }

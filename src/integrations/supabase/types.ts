@@ -137,8 +137,6 @@ export type Database = {
           id: string
           installation_id: string
           last_seen_at: string | null
-          removed_at: string | null
-          removed_by: string | null
           status: Database["public"]["Enums"]["device_status"] | null
           updated_at: string | null
         }
@@ -154,8 +152,6 @@ export type Database = {
           id?: string
           installation_id: string
           last_seen_at?: string | null
-          removed_at?: string | null
-          removed_by?: string | null
           status?: Database["public"]["Enums"]["device_status"] | null
           updated_at?: string | null
         }
@@ -171,8 +167,6 @@ export type Database = {
           id?: string
           installation_id?: string
           last_seen_at?: string | null
-          removed_at?: string | null
-          removed_by?: string | null
           status?: Database["public"]["Enums"]["device_status"] | null
           updated_at?: string | null
         }
@@ -320,13 +314,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      device_status:
-        | "pending"
-        | "active"
-        | "expired"
-        | "blocked"
-        | "revoked"
-        | "removed"
+      device_status: "pending" | "active" | "expired" | "blocked" | "revoked"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -454,14 +442,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      device_status: [
-        "pending",
-        "active",
-        "expired",
-        "blocked",
-        "revoked",
-        "removed",
-      ],
+      device_status: ["pending", "active", "expired", "blocked", "revoked"],
     },
   },
 } as const

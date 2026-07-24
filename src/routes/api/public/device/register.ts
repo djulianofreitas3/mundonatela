@@ -50,7 +50,7 @@ Route.options.server = {
         return new Response(JSON.stringify({ 
           success: true, 
           device_id: data.id,
-          status: data.status === 'pending' ? 'pendente' : (data.status === 'active' ? 'ativo' : data.status) 
+          status: data.status 
         }), {
           status: 200,
           headers: { 'Content-Type': 'application/json' }
