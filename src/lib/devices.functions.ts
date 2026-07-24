@@ -24,24 +24,27 @@ export const updateDevice = createServerFn({ method: "POST" })
       expires_at: z.string().nullable().optional(),
       cliente_id: z.string().uuid().nullable().optional(),
       device_token: z.string().nullable().optional(),
-      // removed_at and removed_by are no longer accepted from client for security
     }).parse(data)
   )
   .handler(async ({ data: { id, ...input } }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { requireSupabaseAuth } = await import("@/integrations/supabase/auth-middleware");
     
-    // Validate session for any update
-    const { userId } = await requireSupabaseAuth();
+    // Validate session
+    const authContext = await requireSupabaseAuth();
+    // In TanStack Start v1, requireSupabaseAuth is often used as .middleware()
+    // but here we call it inside the handler to get the userId safely.
+    // If it's a server function middleware, it's typically passed via context.
+    
+    const userId = authContext.userId;
     if (!userId) throw new Error("Não autorizado.");
 
     const updateData: any = { ...input };
 
-    // If status is being set to removed, inject server-side audit data
     if (input.status === 'removed') {
       updateData.removed_at = new Date().toISOString();
       updateData.removed_by = userId;
-      updateData.device_token = null; // Ensure token is revoked
+      updateData.device_token = null;
     }
 
     const { data, error } = await supabaseAdmin
@@ -62,7 +65,7 @@ export const cancelActivationRequest = createServerFn({ method: "POST" })
       status: z.enum(['rejected', 'cancelled']),
     }).parse(data)
   )
-  .handler(async ({ data: { id, status } }) => {
+  .handler(async ({ data: { id } }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { requireSupabaseAuth } = await import("@/integrations/supabase/auth-middleware");
     
@@ -71,8 +74,8 @@ export const cancelActivationRequest = createServerFn({ method: "POST" })
     const { error } = await supabaseAdmin
       .from("codigos_ativacao")
       .update({ 
-        used_at: new Date().toISOString(), // Mark as used so it disappears from pending
-        poll_token: null // Invalidate token
+        used_at: new Date().toISOString(),
+        poll_token: null
       })
       .eq("id", id);
 
@@ -117,7 +120,7 @@ export const activateDeviceAction = createServerFn({ method: "POST" })
   .validator((data: unknown) => 
     z.object({
       activation_code_id: z.string().uuid().optional(),
-      code: z.string().optional(), // Added for manual activation
+      code: z.string().optional(),
       cliente_id: z.string().uuid(),
       lista_id: z.string().uuid(),
       expires_at: z.string().nullable(),
@@ -130,7 +133,6 @@ export const activateDeviceAction = createServerFn({ method: "POST" })
     let targetCodeId = data.activation_code_id;
     let dispositivoId: string | null = null;
 
-    // 1. Resolve code if manual string provided
     if (!targetCodeId && data.code) {
       const { data: foundCode, error: findErr } = await supabaseAdmin
         .from("codigos_ativacao")
@@ -142,13 +144,11 @@ export const activateDeviceAction = createServerFn({ method: "POST" })
 
       if (findErr || !foundCode) throw new Error("Código inexistente.");
       if (foundCode.used_at) throw new Error("Código já processado.");
-      if (foundCode.expires_at && new Date(foundCode.expires_at) < new Date()) throw new Error("Código expirado.");
       
       targetCodeId = foundCode.id;
       dispositivoId = (foundCode.dispositivo as any)?.id;
     }
 
-    // 2. Get activation code if using ID
     if (targetCodeId && !dispositivoId) {
       const { data: code, error: codeErr } = await supabaseAdmin
         .from("codigos_ativacao")
@@ -162,7 +162,6 @@ export const activateDeviceAction = createServerFn({ method: "POST" })
 
     if (!dispositivoId) throw new Error("Dispositivo não encontrado.");
 
-    // 3. Update device
     const { error: devErr } = await supabaseAdmin
       .from("dispositivos")
       .update({
@@ -176,14 +175,12 @@ export const activateDeviceAction = createServerFn({ method: "POST" })
 
     if (devErr) throw devErr;
 
-    // 4. Link list
     const { error: linkErr } = await supabaseAdmin
       .from("dispositivo_lista")
       .upsert({ dispositivo_id: dispositivoId, lista_id: data.lista_id }, { onConflict: 'dispositivo_id,lista_id' });
 
     if (linkErr) throw linkErr;
 
-    // 5. Mark code as used
     if (targetCodeId) {
       await supabaseAdmin
         .from("codigos_ativacao")
@@ -191,7 +188,6 @@ export const activateDeviceAction = createServerFn({ method: "POST" })
         .eq("id", targetCodeId);
     }
 
-    // 6. Register history
     await supabaseAdmin
       .from("historico_ativacoes")
       .insert({
