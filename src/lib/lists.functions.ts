@@ -23,6 +23,7 @@ export const createList = createServerFn({ method: "POST" })
       url: z.string().url("URL inválida"),
       usuario: z.string().min(1, "Usuário é obrigatório"),
       senha: z.string().min(1, "Senha é obrigatória"),
+      epg_url: z.string().url("URL de EPG inválida").optional().or(z.literal("")),
       status: z.string().default("ativo"),
       vencimento: z.string().optional(),
       cliente_id: z.string().uuid().optional(),
@@ -39,7 +40,7 @@ export const createList = createServerFn({ method: "POST" })
 
     const { data, error } = await supabaseAdmin
       .from("listas_iptv")
-      .insert([{ ...input, url: normalizedUrl }])
+      .insert([{ ...input, url: normalizedUrl, epg_url: input.epg_url?.trim() || null }])
       .select()
       .single();
 
