@@ -2,7 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Layout } from "@/components/layout/Layout";
 import { useState } from "react";
-import { Search, Plus, MoreVertical, Trash2, Edit2, Globe, User, Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { Search, Plus, MoreVertical, Trash2, Edit2, Globe, User, Loader2, CheckCircle2, XCircle, CalendarClock } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getLists, createList, testXtreamConnection } from "@/lib/lists.functions";
 import { getClients } from "@/lib/clients.functions";
@@ -18,6 +18,7 @@ const listSchema = z.object({
   url: z.string().url("URL inválida"),
   usuario: z.string().min(1, "Usuário é obrigatório"),
   senha: z.string().min(1, "Senha é obrigatória"),
+  epg_url: z.string().url("URL de EPG inválida").optional().or(z.literal("")),
   status: z.string().min(1, "Status é obrigatório"),
   cliente_id: z.string().uuid().optional().or(z.literal("")),
   vencimento: z.string().optional(),
@@ -177,6 +178,12 @@ function Lists() {
                         <Globe size={12} />
                         {list.url}
                       </div>
+                      {list.epg_url && (
+                        <div className="text-xs text-muted-foreground flex items-center gap-1">
+                          <CalendarClock size={12} />
+                          EPG: {list.epg_url}
+                        </div>
+                      )}
                     </td>
                     <td className="px-6 py-4 text-sm">
                       <div className="flex items-center gap-1">
