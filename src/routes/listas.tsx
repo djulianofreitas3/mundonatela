@@ -290,6 +290,18 @@ function Lists() {
                   />
                   {errors.senha && <p className="text-red-500 text-xs mt-1">{errors.senha.message}</p>}
                 </div>
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium mb-1">URL do EPG (Guia de Programação)</label>
+                  <input
+                    {...register("epg_url")}
+                    className="w-full px-3 py-2 bg-background border border-border rounded-lg"
+                    placeholder="http://u.startpainel.cc/epg"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Aceita qualquer XMLTV (ex.: /epg, /xmltv.php?username=...&password=...). Enviado ao app junto com a lista.
+                  </p>
+                  {errors.epg_url && <p className="text-red-500 text-xs mt-1">{errors.epg_url.message}</p>}
+                </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Vincular Cliente</label>
                   <select 
