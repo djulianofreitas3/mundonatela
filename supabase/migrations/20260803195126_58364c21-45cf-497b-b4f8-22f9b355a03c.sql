@@ -1,0 +1,1 @@
+ALTER TABLE public.listas_iptv ADD COLUMN IF NOT EXISTS epg_url text;
