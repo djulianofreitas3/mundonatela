@@ -51,7 +51,7 @@ Route.options.server = {
             device_token,
             cliente:clientes(nome, status),
             listas:dispositivo_lista(
-              lista:listas_iptv(nome, url, usuario, senha, status)
+              lista:listas_iptv(nome, url, usuario, senha, status, epg_url)
             )
           `)
           .eq('installation_id', installation_id)
@@ -81,7 +81,8 @@ Route.options.server = {
               name: l.lista.nome,
               url: l.lista.url,
               username: l.lista.usuario,
-              password: l.lista.senha
+              password: l.lista.senha,
+              epg_url: l.lista.epg_url ?? null
             }))
           } : null
         }), {

@@ -242,6 +242,7 @@ export type Database = {
         Row: {
           cliente_id: string | null
           created_at: string | null
+          epg_url: string | null
           id: string
           nome: string
           senha: string
@@ -254,6 +255,7 @@ export type Database = {
         Insert: {
           cliente_id?: string | null
           created_at?: string | null
+          epg_url?: string | null
           id?: string
           nome: string
           senha: string
@@ -266,6 +268,7 @@ export type Database = {
         Update: {
           cliente_id?: string | null
           created_at?: string | null
+          epg_url?: string | null
           id?: string
           nome?: string
           senha?: string
