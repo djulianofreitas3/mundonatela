@@ -55,7 +55,7 @@ export const deleteDevices = createServerFn({ method: "POST" })
     if (error) throw error;
     return { success: true };
   });
-
+export const getPendingActivations = createServerFn({ method: "GET" })
   .handler(async () => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin
