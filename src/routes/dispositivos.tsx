@@ -51,7 +51,7 @@ function Devices() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (ids: string[]) => deleteDevicesFn({ ids }),
+    mutationFn: (ids: string[]) => deleteDevicesFn({ data: { ids } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["devices"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
