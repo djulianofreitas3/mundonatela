@@ -38,6 +38,23 @@ export const updateDevice = createServerFn({ method: "POST" })
     return data;
   });
 
+
+export const deleteDevices = createServerFn({ method: "POST" })
+  .validator((data: unknown) => 
+    z.object({
+      ids: z.array(z.string().uuid()),
+    }).parse(data)
+  )
+  .handler(async ({ data: { ids } }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("dispositivos")
+      .delete()
+      .in("id", ids);
+
+    if (error) throw error;
+    return { success: true };
+  });
 export const getPendingActivations = createServerFn({ method: "GET" })
   .handler(async () => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
