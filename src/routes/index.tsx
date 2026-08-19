@@ -1,4 +1,4 @@
-// Credenciais do Admin Inicial: email: admin@mundonatela.com / senha: admin123456
+// ao excluir ele irá desconectar o dispositivo (on element 'body' at '/src/routes/index.tsx:1')
 
 
 
