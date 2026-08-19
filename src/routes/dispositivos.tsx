@@ -2,12 +2,13 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Layout } from "@/components/layout/Layout";
 import { useState } from "react";
-import { Search, Monitor, Calendar, ShieldCheck, ShieldX, RefreshCw, Unlink, Loader2, Clock } from "lucide-react";
+import { Search, Monitor, Calendar, ShieldCheck, ShieldX, RefreshCw, Unlink, Loader2, Clock, Trash2, CheckSquare, Square } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getDevices, updateDevice } from "@/lib/devices.functions";
+import { getDevices, updateDevice, deleteDevices } from "@/lib/devices.functions";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+
 
 export const Route = createFileRoute("/dispositivos")({
   beforeLoad: async () => {
@@ -24,10 +25,13 @@ export const Route = createFileRoute("/dispositivos")({
 
 function Devices() {
   const [search, setSearch] = useState("");
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const queryClient = useQueryClient();
 
   const getDevicesFn = useServerFn(getDevices);
   const updateDeviceFn = useServerFn(updateDevice);
+  const deleteDevicesFn = useServerFn(deleteDevices);
+
 
   const { data: devices = [], isLoading } = useQuery({
     queryKey: ["devices"],
@@ -45,6 +49,41 @@ function Devices() {
       toast.error(`Falha ao atualizar: ${err.message}`);
     }
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: (ids: string[]) => deleteDevicesFn({ ids }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["devices"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
+      setSelectedIds([]);
+      toast.success("Dispositivos removidos com sucesso!");
+    },
+    onError: (err: any) => {
+      toast.error(`Falha ao remover: ${err.message}`);
+    }
+  });
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const toggleSelectAll = (filteredItems: any[]) => {
+    if (selectedIds.length === filteredItems.length && filteredItems.length > 0) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredItems.map(d => d.id));
+    }
+  };
+
+  const handleDeleteSelected = () => {
+    if (selectedIds.length === 0) return;
+    if (confirm(`Deseja realmente excluir ${selectedIds.length} dispositivos?`)) {
+      deleteMutation.mutate(selectedIds);
+    }
+  };
+
 
 
   const filteredDevices = Array.isArray(devices) ? devices.filter((d: any) => 
@@ -65,8 +104,8 @@ function Devices() {
 
   return (
     <Layout title="Dispositivos">
-      <div className="flex justify-between items-center mb-6">
-        <div className="relative w-72">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div className="relative w-full sm:w-72">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
           <input
             type="text"
@@ -76,7 +115,24 @@ function Devices() {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
+
+        {selectedIds.length > 0 && (
+          <div className="flex items-center gap-3 animate-in fade-in slide-in-from-right-4">
+            <span className="text-sm font-medium text-muted-foreground">
+              {selectedIds.length} selecionado(s)
+            </span>
+            <button
+              onClick={handleDeleteSelected}
+              disabled={deleteMutation.isPending}
+              className="flex items-center gap-2 px-4 py-2 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 transition-colors text-sm font-medium disabled:opacity-50"
+            >
+              <Trash2 size={16} />
+              Excluir Selecionados
+            </button>
+          </div>
+        )}
       </div>
+
 
       {isLoading ? (
         <div className="flex justify-center py-12">
@@ -88,17 +144,46 @@ function Devices() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-muted/50 text-sm font-medium text-muted-foreground border-b border-border">
+                  <th className="px-4 py-4 w-10">
+                    <button 
+                      onClick={() => toggleSelectAll(filteredDevices)}
+                      className="p-1 hover:bg-muted rounded transition-colors"
+                    >
+                      {selectedIds.length > 0 && selectedIds.length === filteredDevices.length ? (
+                        <CheckSquare size={18} className="text-primary" />
+                      ) : (
+                        <Square size={18} />
+                      )}
+                    </button>
+                  </th>
                   <th className="px-6 py-4">Aparelho / Instalação</th>
                   <th className="px-6 py-4">Cliente</th>
                   <th className="px-6 py-4">Status</th>
                   <th className="px-6 py-4">Vencimento</th>
                   <th className="px-6 py-4">Último Acesso</th>
-                  <th className="px-6 py-4">Ações</th>
+                  <th className="px-6 py-4 text-right">Ações</th>
                 </tr>
+
               </thead>
               <tbody className="divide-y divide-border">
                 {filteredDevices.map((device: any) => (
-                  <tr key={device.id} className="hover:bg-muted/30 transition-colors">
+                  <tr 
+                    key={device.id} 
+                    className={`hover:bg-muted/30 transition-colors ${selectedIds.includes(device.id) ? 'bg-primary/5' : ''}`}
+                  >
+                    <td className="px-4 py-4">
+                      <button 
+                        onClick={() => toggleSelect(device.id)}
+                        className="p-1 hover:bg-muted rounded transition-colors"
+                      >
+                        {selectedIds.includes(device.id) ? (
+                          <CheckSquare size={18} className="text-primary" />
+                        ) : (
+                          <Square size={18} />
+                        )}
+                      </button>
+                    </td>
+
                     <td className="px-6 py-4">
                       <div className="font-medium flex items-center gap-2">
                         <Monitor size={16} className="text-muted-foreground" />
@@ -132,8 +217,8 @@ function Devices() {
                         </div>
                       ) : "Nunca"}
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center space-x-1">
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end space-x-1">
                         {device.status === 'blocked' ? (
                           <button 
                             onClick={() => updateMutation.mutate({ id: device.id, status: 'active' })}
@@ -161,8 +246,20 @@ function Devices() {
                         >
                           <Unlink size={18} />
                         </button>
+                        <button 
+                          onClick={() => {
+                            if (confirm("Deseja realmente excluir este dispositivo?")) {
+                              deleteMutation.mutate([device.id]);
+                            }
+                          }}
+                          className="p-2 hover:bg-red-50 text-red-600 rounded-lg transition-colors" 
+                          title="Excluir"
+                        >
+                          <Trash2 size={18} />
+                        </button>
                       </div>
                     </td>
+
                   </tr>
                 ))}
               </tbody>

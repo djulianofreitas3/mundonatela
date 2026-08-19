@@ -1,5 +1,6 @@
-// O painel foi zerado com sucesso. Todos os dados de clientes, listas, dispositivos e históricos foram removidos.
-// O acesso administrativo permanece ativo para o usuário configurado.
+// Credenciais do Admin Inicial: email: admin@mundonatela.com / senha: admin123456
+
+
 
 
 import { createFileRoute, redirect } from "@tanstack/react-router";
