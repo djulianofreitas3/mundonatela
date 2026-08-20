@@ -20,10 +20,13 @@ import {
   ArrowRight,
   Info,
   Loader2,
-  Clock
+  Clock,
+  Trash2,
+  CheckSquare,
+  Square
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getSupportRequests, getSupportStats, updateSupportRequest } from "@/lib/support.functions";
+import { getSupportRequests, getSupportStats, updateSupportRequest, deleteSupportRequests } from "@/lib/support.functions";
 import { format, parseISO } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
