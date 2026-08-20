@@ -75,3 +75,17 @@ export const updateSupportRequest = createServerFn({ method: "POST" })
     if (error) throw error;
     return updated;
   });
+
+export const deleteSupportRequests = createServerFn({ method: "POST" })
+  .inputValidator((data) => z.object({
+    ids: z.array(z.string()),
+  }).parse(data))
+  .handler(async ({ data }) => {
+    const { error } = await supabaseAdmin
+      .from("support_requests")
+      .delete()
+      .in("id", data.ids);
+
+    if (error) throw error;
+    return { success: true };
+  });
