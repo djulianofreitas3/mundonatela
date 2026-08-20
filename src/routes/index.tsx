@@ -543,7 +543,7 @@
 
 
 
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Layout } from "@/components/layout/Layout";
 import { Users, Monitor, Clock, Calendar, ShieldAlert, List, Loader2, History, Plus, MessageSquare } from "lucide-react";
