@@ -315,6 +315,81 @@ export type Database = {
         }
         Relationships: []
       }
+      support_requests: {
+        Row: {
+          admin_note: string | null
+          android_version: string | null
+          app_version: string | null
+          category: string
+          city_state: string | null
+          content_name: string | null
+          created_at: string | null
+          description: string | null
+          device_id: string | null
+          device_manufacturer: string | null
+          device_model: string | null
+          device_name: string | null
+          device_type: string | null
+          id: string
+          installation_id: string | null
+          request_type: string
+          season: string | null
+          status: string | null
+          title: string | null
+          updated_at: string | null
+          version_code: number | null
+          year: string | null
+        }
+        Insert: {
+          admin_note?: string | null
+          android_version?: string | null
+          app_version?: string | null
+          category: string
+          city_state?: string | null
+          content_name?: string | null
+          created_at?: string | null
+          description?: string | null
+          device_id?: string | null
+          device_manufacturer?: string | null
+          device_model?: string | null
+          device_name?: string | null
+          device_type?: string | null
+          id?: string
+          installation_id?: string | null
+          request_type: string
+          season?: string | null
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
+          version_code?: number | null
+          year?: string | null
+        }
+        Update: {
+          admin_note?: string | null
+          android_version?: string | null
+          app_version?: string | null
+          category?: string
+          city_state?: string | null
+          content_name?: string | null
+          created_at?: string | null
+          description?: string | null
+          device_id?: string | null
+          device_manufacturer?: string | null
+          device_model?: string | null
+          device_name?: string | null
+          device_type?: string | null
+          id?: string
+          installation_id?: string | null
+          request_type?: string
+          season?: string | null
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
+          version_code?: number | null
+          year?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
