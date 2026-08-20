@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SolicitacoesRouteImport } from './routes/solicitacoes'
 import { Route as ListasRouteImport } from './routes/listas'
 import { Route as HistoricoRouteImport } from './routes/historico'
 import { Route as DispositivosRouteImport } from './routes/dispositivos'
@@ -24,6 +25,11 @@ import { Route as ApiPublicDeviceRegisterRouteImport } from './routes/api/public
 import { Route as ApiPublicDevicePollRouteImport } from './routes/api/public/device/poll'
 import { Route as ApiPublicDeviceCheckRouteImport } from './routes/api/public/device/check'
 
+const SolicitacoesRoute = SolicitacoesRouteImport.update({
+  id: '/solicitacoes',
+  path: '/solicitacoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ListasRoute = ListasRouteImport.update({
   id: '/listas',
   path: '/listas',
@@ -107,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/dispositivos': typeof DispositivosRoute
   '/historico': typeof HistoricoRoute
   '/listas': typeof ListasRoute
+  '/solicitacoes': typeof SolicitacoesRoute
   '/api/public/submit-support-request': typeof ApiPublicSubmitSupportRequestRoute
   '/api/public/device/check': typeof ApiPublicDeviceCheckRoute
   '/api/public/device/poll': typeof ApiPublicDevicePollRoute
@@ -123,6 +130,7 @@ export interface FileRoutesByTo {
   '/dispositivos': typeof DispositivosRoute
   '/historico': typeof HistoricoRoute
   '/listas': typeof ListasRoute
+  '/solicitacoes': typeof SolicitacoesRoute
   '/api/public/submit-support-request': typeof ApiPublicSubmitSupportRequestRoute
   '/api/public/device/check': typeof ApiPublicDeviceCheckRoute
   '/api/public/device/poll': typeof ApiPublicDevicePollRoute
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/dispositivos': typeof DispositivosRoute
   '/historico': typeof HistoricoRoute
   '/listas': typeof ListasRoute
+  '/solicitacoes': typeof SolicitacoesRoute
   '/api/public/submit-support-request': typeof ApiPublicSubmitSupportRequestRoute
   '/api/public/device/check': typeof ApiPublicDeviceCheckRoute
   '/api/public/device/poll': typeof ApiPublicDevicePollRoute
@@ -158,6 +167,7 @@ export interface FileRouteTypes {
     | '/dispositivos'
     | '/historico'
     | '/listas'
+    | '/solicitacoes'
     | '/api/public/submit-support-request'
     | '/api/public/device/check'
     | '/api/public/device/poll'
@@ -174,6 +184,7 @@ export interface FileRouteTypes {
     | '/dispositivos'
     | '/historico'
     | '/listas'
+    | '/solicitacoes'
     | '/api/public/submit-support-request'
     | '/api/public/device/check'
     | '/api/public/device/poll'
@@ -190,6 +201,7 @@ export interface FileRouteTypes {
     | '/dispositivos'
     | '/historico'
     | '/listas'
+    | '/solicitacoes'
     | '/api/public/submit-support-request'
     | '/api/public/device/check'
     | '/api/public/device/poll'
@@ -207,6 +219,7 @@ export interface RootRouteChildren {
   DispositivosRoute: typeof DispositivosRoute
   HistoricoRoute: typeof HistoricoRoute
   ListasRoute: typeof ListasRoute
+  SolicitacoesRoute: typeof SolicitacoesRoute
   ApiPublicSubmitSupportRequestRoute: typeof ApiPublicSubmitSupportRequestRoute
   ApiPublicDeviceCheckRoute: typeof ApiPublicDeviceCheckRoute
   ApiPublicDevicePollRoute: typeof ApiPublicDevicePollRoute
@@ -216,6 +229,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/solicitacoes': {
+      id: '/solicitacoes'
+      path: '/solicitacoes'
+      fullPath: '/solicitacoes'
+      preLoaderRoute: typeof SolicitacoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/listas': {
       id: '/listas'
       path: '/listas'
@@ -327,6 +347,7 @@ const rootRouteChildren: RootRouteChildren = {
   DispositivosRoute: DispositivosRoute,
   HistoricoRoute: HistoricoRoute,
   ListasRoute: ListasRoute,
+  SolicitacoesRoute: SolicitacoesRoute,
   ApiPublicSubmitSupportRequestRoute: ApiPublicSubmitSupportRequestRoute,
   ApiPublicDeviceCheckRoute: ApiPublicDeviceCheckRoute,
   ApiPublicDevicePollRoute: ApiPublicDevicePollRoute,

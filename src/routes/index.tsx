@@ -546,7 +546,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Layout } from "@/components/layout/Layout";
-import { Users, Monitor, Clock, Calendar, ShieldAlert, List, Loader2, History, Plus } from "lucide-react";
+import { Users, Monitor, Clock, Calendar, ShieldAlert, List, Loader2, History, Plus, MessageSquare } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getDashboardStats } from "@/lib/dashboard.functions";
 import { format } from "date-fns";
@@ -583,6 +583,7 @@ function Dashboard() {
     "Vencidos": Calendar,
     "Bloqueados": ShieldAlert,
     "Listas Ativas": List,
+    "Solicitações Novas": MessageSquare,
   };
 
   return (
@@ -660,6 +661,10 @@ function Dashboard() {
                   <Monitor className="mx-auto mb-2 text-gray-600" size={24} />
                   <span className="text-xs font-bold text-gray-600 uppercase">Ver Dispositivos</span>
                 </a>
+                <Link to="/solicitacoes" search={{ status: 'new' }} className="p-4 rounded-lg bg-rose-50 border border-rose-200 hover:bg-rose-100 transition-colors text-center">
+                  <MessageSquare className="mx-auto mb-2 text-rose-600" size={24} />
+                  <span className="text-xs font-bold text-rose-600 uppercase">Solicitações Novas</span>
+                </Link>
               </div>
             </div>
           </div>

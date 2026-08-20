@@ -1,17 +1,33 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { LayoutDashboard, Users, Tv, Smartphone, Clock, History, Settings, Shield, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, Tv, Smartphone, Clock, History, Settings, Shield, LogOut, Inbox } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 
 export function Layout({ children, title }: { children: React.ReactNode; title: string }) {
+  const { data: stats } = useQuery({
+    queryKey: ["support-stats"],
+    queryFn: async () => {
+      const { getSupportStats } = await import("@/lib/support.functions");
+      return getSupportStats();
+    },
+    refetchInterval: 30000,
+  });
+
   const menu = [
     { name: "Dashboard", path: "/", icon: LayoutDashboard },
     { name: "Clientes", path: "/clientes", icon: Users },
     { name: "Listas Xtream", path: "/listas", icon: Tv },
     { name: "Dispositivos", path: "/dispositivos", icon: Smartphone },
     { name: "Ativações", path: "/ativacoes", icon: Clock },
+    { 
+      name: "Solicitações", 
+      path: "/solicitacoes", 
+      icon: Inbox,
+      badge: stats?.new && stats.new > 0 ? stats.new : null 
+    },
     { name: "Histórico", path: "/historico", icon: History },
     { name: "Administradores", path: "/admins", icon: Shield },
     { name: "Configurações", path: "/config", icon: Settings },
@@ -34,11 +50,18 @@ export function Layout({ children, title }: { children: React.ReactNode; title: 
             <Link
               key={item.path}
               to={item.path}
-              className="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+              className="flex items-center justify-between px-4 py-2.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors group"
               activeProps={{ className: "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground" as any }}
             >
-              <item.icon size={20} />
-              <span>{item.name}</span>
+              <div className="flex items-center space-x-3">
+                <item.icon size={20} />
+                <span>{item.name}</span>
+              </div>
+              {item.badge && (
+                <span className="bg-rose-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                  {item.badge}
+                </span>
+              )}
             </Link>
           ))}
         </nav>

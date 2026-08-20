@@ -74,9 +74,11 @@ function SupportPage() {
   const { data: requests = [], isLoading } = useQuery({
     queryKey: ["support-requests", activeTab, search, statusFilter],
     queryFn: () => getRequestsFn({
-      request_type: activeTab === "all" ? undefined : (activeTab as any),
-      search: search || undefined,
-      status: statusFilter === "all" ? undefined : (statusFilter as any)
+      data: {
+        request_type: activeTab === "all" ? undefined : (activeTab as any),
+        search: search || undefined,
+        status: statusFilter === "all" ? undefined : (statusFilter as any)
+      }
     }),
     refetchInterval: 15000
   });
@@ -104,7 +106,7 @@ function SupportPage() {
   }, [queryClient]);
 
   const updateMutation = useMutation({
-    mutationFn: (variables: { id: string; status?: any; admin_note?: string }) => updateFn(variables),
+    mutationFn: (variables: { id: string; status?: any; admin_note?: string }) => updateFn({ data: variables }),
     onSuccess: () => {
       toast.success("Solicitação atualizada");
       queryClient.invalidateQueries({ queryKey: ["support-requests"] });
