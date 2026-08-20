@@ -1,4 +1,4 @@
-// Me informe agora o endpoint completo da Edge Function submit-support-request, os headers necessários para o aplicativo Android utilizar, a publishable/anon key apropriada e um exemplo exato do JSON aceito pela função. Não altere nada, apenas me forneça essas informações para integrar o aplicativo Android.
+// deu certo, quero que tenha uma opção para excluir as solicitações, ali ao lado de Ações, adicione mais uma opção escrito Excluir, ai tera uma caxinha para assinalar e poder excluir em massa
 
 
 

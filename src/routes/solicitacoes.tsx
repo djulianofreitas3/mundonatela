@@ -20,10 +20,13 @@ import {
   ArrowRight,
   Info,
   Loader2,
-  Clock
+  Clock,
+  Trash2,
+  CheckSquare,
+  Square
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getSupportRequests, getSupportStats, updateSupportRequest } from "@/lib/support.functions";
+import { getSupportRequests, getSupportStats, updateSupportRequest, deleteSupportRequests } from "@/lib/support.functions";
 import { format, parseISO } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -59,11 +62,13 @@ function SupportPage() {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [adminNote, setAdminNote] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const queryClient = useQueryClient();
   const getRequestsFn = useServerFn(getSupportRequests);
   const getStatsFn = useServerFn(getSupportStats);
   const updateFn = useServerFn(updateSupportRequest);
+  const deleteFn = useServerFn(deleteSupportRequests);
 
   const { data: stats, refetch: refetchStats } = useQuery({
     queryKey: ["support-stats"],
@@ -120,6 +125,39 @@ function SupportPage() {
       toast.error("Erro ao atualizar: " + err.message);
     }
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: (ids: string[]) => deleteFn({ data: { ids } }),
+    onSuccess: () => {
+      toast.success("Solicitações excluídas");
+      setSelectedIds([]);
+      queryClient.invalidateQueries({ queryKey: ["support-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["support-stats"] });
+    },
+    onError: (err: any) => {
+      toast.error("Erro ao excluir: " + err.message);
+    }
+  });
+
+  const handleToggleSelect = (id: string) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAll = (ids: string[]) => {
+    if (selectedIds.length === ids.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(ids);
+    }
+  };
+
+  const handleDelete = (ids: string[]) => {
+    if (confirm(`Tem certeza que deseja excluir ${ids.length} solicitação(ões)?`)) {
+      deleteMutation.mutate(ids);
+    }
+  };
 
   const handleOpenDetail = (request: any) => {
     setSelectedRequest(request);
@@ -187,13 +225,27 @@ function SupportPage() {
 
         {/* Filters and Tabs */}
         <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
-          <Tabs defaultValue="all" className="w-full md:w-auto" onValueChange={setActiveTab}>
-            <TabsList>
-              <TabsTrigger value="all">Todos</TabsTrigger>
-              <TabsTrigger value="content_request">Pedidos de Conteúdo</TabsTrigger>
-              <TabsTrigger value="problem_report">Reportar Problema</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+            <Tabs defaultValue="all" className="w-full md:w-auto" onValueChange={setActiveTab}>
+              <TabsList>
+                <TabsTrigger value="all">Todos</TabsTrigger>
+                <TabsTrigger value="content_request">Pedidos de Conteúdo</TabsTrigger>
+                <TabsTrigger value="problem_report">Reportar Problema</TabsTrigger>
+              </TabsList>
+            </Tabs>
+
+            {selectedIds.length > 0 && (
+              <Button 
+                variant="destructive" 
+                size="sm" 
+                onClick={() => handleDelete(selectedIds)}
+                className="flex items-center gap-2"
+              >
+                <Trash2 size={16} />
+                Excluir ({selectedIds.length})
+              </Button>
+            )}
+          </div>
 
           <div className="flex w-full md:w-auto gap-2">
             <div className="relative flex-1 md:w-64">
@@ -231,6 +283,20 @@ function SupportPage() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-muted/50 text-xs font-medium text-muted-foreground border-b border-border uppercase tracking-wider">
+                    <th className="px-6 py-4 w-10">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-6 w-6" 
+                        onClick={() => handleSelectAll(requests.map((r: any) => r.id))}
+                      >
+                        {selectedIds.length === requests.length && requests.length > 0 ? (
+                          <CheckSquare size={16} className="text-primary" />
+                        ) : (
+                          <Square size={16} />
+                        )}
+                      </Button>
+                    </th>
                     <th className="px-6 py-4">Status</th>
                     <th className="px-6 py-4">Tipo</th>
                     <th className="px-6 py-4">Categoria</th>
@@ -242,7 +308,21 @@ function SupportPage() {
                 </thead>
                 <tbody className="divide-y divide-border">
                   {requests.map((req: any) => (
-                    <tr key={req.id} className={`hover:bg-muted/30 transition-colors ${req.status === 'new' ? 'bg-rose-50/20' : ''}`}>
+                    <tr key={req.id} className={`hover:bg-muted/30 transition-colors ${req.status === 'new' ? 'bg-rose-50/20' : ''} ${selectedIds.includes(req.id) ? 'bg-primary/5' : ''}`}>
+                      <td className="px-6 py-4">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-6 w-6" 
+                          onClick={() => handleToggleSelect(req.id)}
+                        >
+                          {selectedIds.includes(req.id) ? (
+                            <CheckSquare size={16} className="text-primary" />
+                          ) : (
+                            <Square size={16} />
+                          )}
+                        </Button>
+                      </td>
                       <td className="px-6 py-4">{getStatusBadge(req.status)}</td>
                       <td className="px-6 py-4 text-sm font-medium">
                         {req.request_type === 'content_request' ? (
@@ -267,9 +347,19 @@ function SupportPage() {
                         {format(parseISO(req.created_at), "dd/MM HH:mm")}
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <Button variant="ghost" size="sm" onClick={() => handleOpenDetail(req)}>
-                          <Eye size={16} className="mr-2" /> Detalhes
-                        </Button>
+                        <div className="flex justify-end gap-2">
+                          <Button variant="ghost" size="sm" onClick={() => handleOpenDetail(req)}>
+                            <Eye size={16} className="mr-2" /> Detalhes
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="text-rose-500 hover:text-rose-600 hover:bg-rose-50"
+                            onClick={() => handleDelete([req.id])}
+                          >
+                            <Trash2 size={16} />
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))}
