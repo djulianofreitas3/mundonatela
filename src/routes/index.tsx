@@ -657,10 +657,10 @@ function Dashboard() {
                   <List className="mx-auto mb-2 text-purple-600" size={24} />
                   <span className="text-xs font-bold text-purple-600 uppercase">Nova Lista</span>
                 </a>
-                <a href="/dispositivos" className="p-4 rounded-lg bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors text-center">
+                <Link to="/dispositivos" className="p-4 rounded-lg bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors text-center">
                   <Monitor className="mx-auto mb-2 text-gray-600" size={24} />
                   <span className="text-xs font-bold text-gray-600 uppercase">Ver Dispositivos</span>
-                </a>
+                </Link>
                 <Link to="/solicitacoes" search={{ status: 'new' }} className="p-4 rounded-lg bg-rose-50 border border-rose-200 hover:bg-rose-100 transition-colors text-center">
                   <MessageSquare className="mx-auto mb-2 text-rose-600" size={24} />
                   <span className="text-xs font-bold text-rose-600 uppercase">Solicitações Novas</span>
