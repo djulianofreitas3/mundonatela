@@ -50,6 +50,38 @@ Route.options.server = {
           })
         }
 
+        // 1. Duplicate check (only for content_request)
+        if (result.data.request_type === 'content_request' && result.data.xtream_username && result.data.content_name) {
+          const normalizedContent = result.data.content_name.trim().toLowerCase();
+          
+          let duplicateQuery = supabaseAdmin
+            .from('support_requests')
+            .select('id')
+            .eq('request_type', 'content_request')
+            .eq('xtream_username', result.data.xtream_username)
+            .ilike('content_name', normalizedContent)
+            .eq('category', result.data.category);
+
+          if (result.data.category === 'series' && result.data.season) {
+            duplicateQuery = duplicateQuery.eq('season', result.data.season);
+          } else if (result.data.category === 'movie' && result.data.year) {
+            duplicateQuery = duplicateQuery.eq('year', result.data.year);
+          }
+
+          const { data: existing } = await duplicateQuery.limit(1);
+
+          if (existing && existing.length > 0) {
+            return new Response(JSON.stringify({ 
+              success: false, 
+              error: 'duplicate_request',
+              message: 'Este pedido já foi realizado.'
+            }), { 
+              status: 409,
+              headers: { 'Content-Type': 'application/json' }
+            });
+          }
+        }
+
         // Force admin-only fields to defaults/null
         const finalData = {
           ...result.data,

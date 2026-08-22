@@ -299,6 +299,7 @@ function SupportPage() {
                     </th>
                     <th className="px-6 py-4">Status</th>
                     <th className="px-6 py-4">Tipo</th>
+                    <th className="px-6 py-4">Usuário</th>
                     <th className="px-6 py-4">Categoria</th>
                     <th className="px-6 py-4">Solicitação</th>
                     <th className="px-6 py-4">Dispositivo</th>
