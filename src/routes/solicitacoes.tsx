@@ -389,11 +389,14 @@ function SupportPage() {
               <div>
                 <label className="text-xs font-bold text-muted-foreground uppercase">Informações Básicas</label>
                 <div className="mt-2 space-y-2">
+                  <p className="text-sm"><span className="font-semibold">Usuário:</span> {selectedRequest?.xtream_username || "Não identificado"}</p>
                   <p className="text-sm"><span className="font-semibold">Categoria:</span> {getCategoryLabel(selectedRequest?.category)}</p>
                   {selectedRequest?.content_name && <p className="text-sm"><span className="font-semibold">Nome:</span> {selectedRequest.content_name}</p>}
                   {selectedRequest?.title && <p className="text-sm"><span className="font-semibold">Título:</span> {selectedRequest.title}</p>}
                   {selectedRequest?.year && <p className="text-sm"><span className="font-semibold">Ano:</span> {selectedRequest.year}</p>}
                   {selectedRequest?.season && <p className="text-sm"><span className="font-semibold">Temporada:</span> {selectedRequest.season}</p>}
+                  {selectedRequest?.season_number && <p className="text-sm"><span className="font-semibold">Nº Temporada:</span> {selectedRequest.season_number}</p>}
+                  {selectedRequest?.episode_number && <p className="text-sm"><span className="font-semibold">Nº Episódio:</span> {selectedRequest.episode_number}</p>}
                   {selectedRequest?.city_state && <p className="text-sm"><span className="font-semibold">Local:</span> {selectedRequest.city_state}</p>}
                 </div>
               </div>
