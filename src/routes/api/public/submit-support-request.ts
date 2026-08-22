@@ -34,6 +34,12 @@ Route.options.server = {
           android_version: z.string().optional(),
           app_version: z.string().optional(),
           version_code: z.number().optional(),
+          xtream_username: z.string().optional(),
+          content_id: z.string().optional(),
+          series_id: z.string().optional(),
+          season_number: z.number().optional(),
+          episode_id: z.string().optional(),
+          episode_number: z.number().optional(),
         })
 
         const result = schema.safeParse(body)
