@@ -322,6 +322,7 @@ export type Database = {
           app_version: string | null
           category: string
           city_state: string | null
+          content_id: string | null
           content_name: string | null
           created_at: string | null
           description: string | null
@@ -330,14 +331,19 @@ export type Database = {
           device_model: string | null
           device_name: string | null
           device_type: string | null
+          episode_id: string | null
+          episode_number: number | null
           id: string
           installation_id: string | null
           request_type: string
           season: string | null
+          season_number: number | null
+          series_id: string | null
           status: string | null
           title: string | null
           updated_at: string | null
           version_code: number | null
+          xtream_username: string | null
           year: string | null
         }
         Insert: {
@@ -346,6 +352,7 @@ export type Database = {
           app_version?: string | null
           category: string
           city_state?: string | null
+          content_id?: string | null
           content_name?: string | null
           created_at?: string | null
           description?: string | null
@@ -354,14 +361,19 @@ export type Database = {
           device_model?: string | null
           device_name?: string | null
           device_type?: string | null
+          episode_id?: string | null
+          episode_number?: number | null
           id?: string
           installation_id?: string | null
           request_type: string
           season?: string | null
+          season_number?: number | null
+          series_id?: string | null
           status?: string | null
           title?: string | null
           updated_at?: string | null
           version_code?: number | null
+          xtream_username?: string | null
           year?: string | null
         }
         Update: {
@@ -370,6 +382,7 @@ export type Database = {
           app_version?: string | null
           category?: string
           city_state?: string | null
+          content_id?: string | null
           content_name?: string | null
           created_at?: string | null
           description?: string | null
@@ -378,14 +391,19 @@ export type Database = {
           device_model?: string | null
           device_name?: string | null
           device_type?: string | null
+          episode_id?: string | null
+          episode_number?: number | null
           id?: string
           installation_id?: string | null
           request_type?: string
           season?: string | null
+          season_number?: number | null
+          series_id?: string | null
           status?: string | null
           title?: string | null
           updated_at?: string | null
           version_code?: number | null
+          xtream_username?: string | null
           year?: string | null
         }
         Relationships: []
