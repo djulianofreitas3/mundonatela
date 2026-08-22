@@ -332,6 +332,9 @@ function SupportPage() {
                           <span className="flex items-center gap-1.5 text-orange-600"><AlertTriangle size={14} /> Problema</span>
                         )}
                       </td>
+                      <td className="px-6 py-4 text-xs font-medium">
+                        {req.xtream_username || <span className="text-muted-foreground italic">Não identificado</span>}
+                      </td>
                       <td className="px-6 py-4 text-sm">{getCategoryLabel(req.category)}</td>
                       <td className="px-6 py-4">
                         <div className="max-w-xs truncate font-medium text-sm">
