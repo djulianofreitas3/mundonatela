@@ -29,6 +29,7 @@ const supportRequestSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
   search: z.string().optional(),
+  xtream_username: z.string().optional(),
 });
 
 export const getSupportRequests = createServerFn({ method: "GET" })
@@ -49,7 +50,7 @@ export const getSupportRequests = createServerFn({ method: "GET" })
       query = query.eq("category", data.category);
     }
     if (data.search) {
-      query = query.or(`content_name.ilike.%${data.search}%,title.ilike.%${data.search}%,description.ilike.%${data.search}%,device_name.ilike.%${data.search}%`);
+      query = query.or(`content_name.ilike.%${data.search}%,title.ilike.%${data.search}%,description.ilike.%${data.search}%,device_name.ilike.%${data.search}%,xtream_username.ilike.%${data.search}%`);
     }
 
     const { data: requests, error } = await query;

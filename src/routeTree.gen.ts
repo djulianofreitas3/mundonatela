@@ -19,6 +19,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AtivacoesRouteImport } from './routes/ativacoes'
 import { Route as AdminsRouteImport } from './routes/admins'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiPublicSupportRequestsRouteImport } from './routes/api/public/support-requests'
 import { Route as ApiPublicSubmitSupportRequestRouteImport } from './routes/api/public/submit-support-request'
 import { Route as ApiPublicDeviceRequestCodeRouteImport } from './routes/api/public/device/request-code'
 import { Route as ApiPublicDeviceRegisterRouteImport } from './routes/api/public/device/register'
@@ -75,6 +76,12 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicSupportRequestsRoute =
+  ApiPublicSupportRequestsRouteImport.update({
+    id: '/api/public/support-requests',
+    path: '/api/public/support-requests',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicSubmitSupportRequestRoute =
   ApiPublicSubmitSupportRequestRouteImport.update({
     id: '/api/public/submit-support-request',
@@ -115,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/listas': typeof ListasRoute
   '/solicitacoes': typeof SolicitacoesRoute
   '/api/public/submit-support-request': typeof ApiPublicSubmitSupportRequestRoute
+  '/api/public/support-requests': typeof ApiPublicSupportRequestsRoute
   '/api/public/device/check': typeof ApiPublicDeviceCheckRoute
   '/api/public/device/poll': typeof ApiPublicDevicePollRoute
   '/api/public/device/register': typeof ApiPublicDeviceRegisterRoute
@@ -132,6 +140,7 @@ export interface FileRoutesByTo {
   '/listas': typeof ListasRoute
   '/solicitacoes': typeof SolicitacoesRoute
   '/api/public/submit-support-request': typeof ApiPublicSubmitSupportRequestRoute
+  '/api/public/support-requests': typeof ApiPublicSupportRequestsRoute
   '/api/public/device/check': typeof ApiPublicDeviceCheckRoute
   '/api/public/device/poll': typeof ApiPublicDevicePollRoute
   '/api/public/device/register': typeof ApiPublicDeviceRegisterRoute
@@ -150,6 +159,7 @@ export interface FileRoutesById {
   '/listas': typeof ListasRoute
   '/solicitacoes': typeof SolicitacoesRoute
   '/api/public/submit-support-request': typeof ApiPublicSubmitSupportRequestRoute
+  '/api/public/support-requests': typeof ApiPublicSupportRequestsRoute
   '/api/public/device/check': typeof ApiPublicDeviceCheckRoute
   '/api/public/device/poll': typeof ApiPublicDevicePollRoute
   '/api/public/device/register': typeof ApiPublicDeviceRegisterRoute
@@ -169,6 +179,7 @@ export interface FileRouteTypes {
     | '/listas'
     | '/solicitacoes'
     | '/api/public/submit-support-request'
+    | '/api/public/support-requests'
     | '/api/public/device/check'
     | '/api/public/device/poll'
     | '/api/public/device/register'
@@ -186,6 +197,7 @@ export interface FileRouteTypes {
     | '/listas'
     | '/solicitacoes'
     | '/api/public/submit-support-request'
+    | '/api/public/support-requests'
     | '/api/public/device/check'
     | '/api/public/device/poll'
     | '/api/public/device/register'
@@ -203,6 +215,7 @@ export interface FileRouteTypes {
     | '/listas'
     | '/solicitacoes'
     | '/api/public/submit-support-request'
+    | '/api/public/support-requests'
     | '/api/public/device/check'
     | '/api/public/device/poll'
     | '/api/public/device/register'
@@ -221,6 +234,7 @@ export interface RootRouteChildren {
   ListasRoute: typeof ListasRoute
   SolicitacoesRoute: typeof SolicitacoesRoute
   ApiPublicSubmitSupportRequestRoute: typeof ApiPublicSubmitSupportRequestRoute
+  ApiPublicSupportRequestsRoute: typeof ApiPublicSupportRequestsRoute
   ApiPublicDeviceCheckRoute: typeof ApiPublicDeviceCheckRoute
   ApiPublicDevicePollRoute: typeof ApiPublicDevicePollRoute
   ApiPublicDeviceRegisterRoute: typeof ApiPublicDeviceRegisterRoute
@@ -299,6 +313,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/support-requests': {
+      id: '/api/public/support-requests'
+      path: '/api/public/support-requests'
+      fullPath: '/api/public/support-requests'
+      preLoaderRoute: typeof ApiPublicSupportRequestsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/submit-support-request': {
       id: '/api/public/submit-support-request'
       path: '/api/public/submit-support-request'
@@ -349,6 +370,7 @@ const rootRouteChildren: RootRouteChildren = {
   ListasRoute: ListasRoute,
   SolicitacoesRoute: SolicitacoesRoute,
   ApiPublicSubmitSupportRequestRoute: ApiPublicSubmitSupportRequestRoute,
+  ApiPublicSupportRequestsRoute: ApiPublicSupportRequestsRoute,
   ApiPublicDeviceCheckRoute: ApiPublicDeviceCheckRoute,
   ApiPublicDevicePollRoute: ApiPublicDevicePollRoute,
   ApiPublicDeviceRegisterRoute: ApiPublicDeviceRegisterRoute,
