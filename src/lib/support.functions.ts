@@ -29,6 +29,7 @@ const supportRequestSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
   search: z.string().optional(),
+  xtream_username: z.string().optional(),
 });
 
 export const getSupportRequests = createServerFn({ method: "GET" })
