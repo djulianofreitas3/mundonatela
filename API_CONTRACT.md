@@ -1,114 +1,97 @@
 # Contrato da API Pública - Mundo na Tela
 
 **URL Base de Produção:** `https://mundonatela.lovable.app`
-**URL Base de Desenvolvimento:** `https://ccc9c726-0c84-4d1a-af25-d0dd92838866.lovableproject.com`
 
 ---
 
-## 1. Registro de Dispositivo
-Utilizado no primeiro acesso do aplicativo ou após desinstalação. O `installation_id` deve ser um UUID gerado localmente pelo app.
+## 1. Módulo de Ativação (Dispositivos)
 
-- **Endpoint:** `POST /api/public/device/register`
-- **Headers:** `Content-Type: application/json`
-- **Body:**
+Veja `API_CONTRACT_DEVICE.md` para o fluxo de registro, polling e check-in.
+
+---
+
+## 2. Módulo de Suporte e Solicitações
+
+Utilizado para envio de pedidos de conteúdo e reporte de erros.
+
+### A. Enviar Solicitação (POST)
+- **Endpoint:** `POST /api/public/submit-support-request`
+- **Headers:** 
+  - `Content-Type: application/json`
+  - `apikey: sb_publishable_8FzvfK5WftTxhf3kZOI6Tg_FhLigKcT`
+- **Prevenção de Duplicidade:** O backend bloqueia envios repetidos do mesmo conteúdo para o mesmo `xtream_username` (categorias movie, series, channel). Retorna `409 Conflict` se duplicado.
+
+**Exemplo: Pedido de Filme**
 ```json
 {
-  "installation_id": "UUID-GERADO-PELO-APP",
-  "device_name": "Xiaomi Mi Box S",
-  "android_version": "9.0",
-  "app_version": "1.0.4"
+  "request_type": "content_request",
+  "category": "movie",
+  "content_name": "Gladiador 2",
+  "year": "2024",
+  "xtream_username": "usuario123",
+  "installation_id": "UUID-DO-DISPOSITIVO",
+  "device_name": "Mi Box S"
 }
 ```
+
+**Exemplo: Reportar Problema em Série**
+```json
+{
+  "request_type": "problem_report",
+  "category": "series",
+  "content_name": "Stranger Things",
+  "series_id": "456",
+  "season_number": 2,
+  "episode_number": 5,
+  "description": "Travando no minuto 15",
+  "xtream_username": "usuario123",
+  "installation_id": "UUID-DO-DISPOSITIVO"
+}
+```
+
+### B. Consultar Histórico (GET)
+Retorna os pedidos feitos pelo usuário atual.
+- **Endpoint:** `GET /api/public/support-requests?xtream_username=usuario123&installation_id=UUID-DO-DISPOSITIVO`
+- **Headers:** 
+  - `apikey: sb_publishable_8FzvfK5WftTxhf3kZOI6Tg_FhLigKcT`
+  - `Authorization: Bearer <device_token>` (Token obtido na ativação)
 - **Retorno (200 OK):**
 ```json
 {
   "success": true,
-  "device_id": "UUID-INTERNO",
-  "status": "pending"
+  "data": [
+    {
+      "id": "...",
+      "request_type": "content_request",
+      "category": "movie",
+      "content_name": "Gladiador 2",
+      "status": "in_review",
+      "admin_note": "Estamos processando seu pedido.",
+      "created_at": "2024-03-20T10:00:00Z"
+    }
+  ]
 }
 ```
 
 ---
 
-## 2. Solicitar Código de Ativação
-Gera o código de 6 dígitos para exibição na tela do aparelho.
+## 3. Mapeamento de Status (UI do App)
 
-- **Endpoint:** `POST /api/public/device/request-code`
-- **Body:**
-```json
-{
-  "installation_id": "UUID-GERADO-PELO-APP"
-}
-```
-- **Retorno (200 OK):**
-```json
-{
-  "success": true,
-  "code": "ABC123",
-  "request_id": "UUID-DA-SOLICITACAO",
-  "poll_token": "TOKEN-SECRETO-DE-CONSULTA",
-  "expires_at": "ISO-TIMESTAMP"
-}
-```
+| Status no Backend | Label Sugerida |
+| :--- | :--- |
+| `new` | Novo |
+| `in_review` | Em análise |
+| `added` | Adicionado |
+| `completed` | Concluído |
+| `unavailable` | Não disponível |
 
 ---
 
-## 3. Polling de Status
-O app deve consultar este endpoint a cada 5-10 segundos enquanto exibe o código.
-
-- **Endpoint:** `POST /api/public/device/poll`
-- **Body:**
-```json
-{
-  "request_id": "UUID-DA-SOLICITACAO",
-  "poll_token": "TOKEN-SECRETO-DE-CONSULTA"
-}
-```
-- **Respostas Possíveis:**
-  - `{"status": "pending"}`: Ainda aguardando aprovação no painel.
-  - `{"status": "approved", "device_token": "UUID-TOKEN-ATIVACAO"}`: Sucesso! Guardar o `device_token` localmente.
-  - `{"status": "rejected"}`: Administrador negou a solicitação.
-  - `{"status": "expired"}`: O código de 15 minutos expirou.
-  - `{"status": "blocked"}`: Dispositivo bloqueado pelo administrador.
-
----
-
-## 4. Obter Configuração (Check)
-Utilizado em cada abertura do aplicativo para obter os dados da lista Xtream.
-
-- **Endpoint:** `POST /api/public/device/check`
-- **Opção A (Body):** `{"installation_id": "...", "device_token": "..."}`
-- **Opção B (Header - Recomendado):** `Authorization: Bearer <device_token>` + Body `{"installation_id": "..."}`
-- **Retorno Ativo (200 OK):**
-```json
-{
-  "status": "active",
-  "expires_at": "ISO-TIMESTAMP",
-  "config": {
-    "client_name": "João Silva",
-    "lists": [
-      {
-        "name": "Lista Premium 4K",
-        "url": "http://servidor.xyz:8080",
-        "username": "user123",
-        "password": "pass123"
-      }
-    ]
-  }
-}
-```
-- **Retorno Inativo/Expirado:**
-```json
-{
-  "status": "expired",
-  "expires_at": "...",
-  "config": null
-}
-```
-
----
-
-## Segurança e Implementação
-- **Arquivos:** `src/routes/api/public/device/*.ts`
-- **Tabelas:** `dispositivos`, `codigos_ativacao`, `dispositivo_lista`, `listas_iptv`.
-- **Lógica:** O `device_token` é gerado apenas no momento da ativação e nunca é exibido no painel. O polling requer o `poll_token` específico da solicitação.
+## 4. Campos Adicionados (Banco de Dados)
+Tabela: `support_requests`
+- `xtream_username` (text)
+- `content_id` (text)
+- `series_id` (text)
+- `season_number` (int4)
+- `episode_id` (text)
+- `episode_number` (int4)
