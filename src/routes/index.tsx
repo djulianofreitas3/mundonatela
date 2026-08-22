@@ -1,4 +1,34 @@
-// deu certo, quero que tenha uma opção para excluir as solicitações, ali ao lado de Ações, adicione mais uma opção escrito Excluir, ai tera uma caxinha para assinalar e poder excluir em massa
+/**
+ * Me envie aqui no chat o conteúdo COMPLETO do arquivo API_CONTRACT.md.
+ *
+ * Quero o contrato técnico completo para integração com o aplicativo Android, incluindo:
+ *
+ * 1. URL completa do endpoint de envio de solicitação;
+ * 2. URL completa do endpoint de consulta de pedidos do usuário;
+ * 3. método HTTP de cada endpoint;
+ * 4. todos os headers obrigatórios;
+ * 5. como deve ser enviado o token do dispositivo;
+ * 6. se continua sendo necessário o header apikey;
+ * 7. JSON completo para pedido de Filme;
+ * 8. JSON completo para pedido de Série;
+ * 9. JSON completo para pedido de Canal;
+ * 10. JSON completo para Reportar Problema;
+ * 11. campos content_id, series_id, season_number, episode_number e episode_id;
+ * 12. exemplo completo da resposta de sucesso do POST;
+ * 13. exemplo da resposta quando o pedido é duplicado;
+ * 14. código HTTP utilizado para duplicidade;
+ * 15. exemplo completo da resposta GET de "Pedidos solicitados";
+ * 16. todos os valores possíveis de status;
+ * 17. como o backend identifica que o usuário só pode consultar os próprios pedidos;
+ * 18. se xtream_username deve ser enviado no GET ou se é identificado pelo token;
+ * 19. campos obrigatórios e opcionais;
+ * 20. exemplos de erros 400, 401, 403, 409 e 500, se aplicável.
+ *
+ * Não altere mais nada no projeto.
+ *
+ * Quero somente o conteúdo técnico completo do API_CONTRACT.md para integrar no aplicativo Android.
+ */
+
 
 
 

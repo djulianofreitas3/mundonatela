@@ -5,57 +5,94 @@
 ---
 
 ## 1. Módulo de Ativação (Dispositivos)
-
-Veja `API_CONTRACT_DEVICE.md` para o fluxo de registro, polling e check-in.
+Consulte `API_CONTRACT_DEVICE.md` para o fluxo detalhado de registro e check-in.
 
 ---
 
 ## 2. Módulo de Suporte e Solicitações
-
-Utilizado para envio de pedidos de conteúdo e reporte de erros.
 
 ### A. Enviar Solicitação (POST)
 - **Endpoint:** `POST /api/public/submit-support-request`
 - **Headers:** 
   - `Content-Type: application/json`
   - `apikey: sb_publishable_8FzvfK5WftTxhf3kZOI6Tg_FhLigKcT`
-- **Prevenção de Duplicidade:** O backend bloqueia envios repetidos do mesmo conteúdo para o mesmo `xtream_username` (categorias movie, series, channel). Retorna `409 Conflict` se duplicado.
+- **Token de Dispositivo:** Não obrigatório no POST, mas recomendado enviar `installation_id` para rastreio.
 
-**Exemplo: Pedido de Filme**
+**Estrutura JSON - Pedido de Filme:**
 ```json
 {
   "request_type": "content_request",
   "category": "movie",
   "content_name": "Gladiador 2",
   "year": "2024",
-  "xtream_username": "usuario123",
-  "installation_id": "UUID-DO-DISPOSITIVO",
-  "device_name": "Mi Box S"
+  "xtream_username": "usuario_teste",
+  "installation_id": "UUID-UNICO",
+  "device_name": "Xiaomi Mi Box"
 }
 ```
 
-**Exemplo: Reportar Problema em Série**
+**Estrutura JSON - Pedido de Série:**
 ```json
 {
-  "request_type": "problem_report",
+  "request_type": "content_request",
   "category": "series",
   "content_name": "Stranger Things",
   "series_id": "456",
-  "season_number": 2,
-  "episode_number": 5,
-  "description": "Travando no minuto 15",
-  "xtream_username": "usuario123",
-  "installation_id": "UUID-DO-DISPOSITIVO"
+  "season_number": 5,
+  "xtream_username": "usuario_teste",
+  "installation_id": "UUID-UNICO"
 }
 ```
 
-### B. Consultar Histórico (GET)
-Retorna os pedidos feitos pelo usuário atual.
-- **Endpoint:** `GET /api/public/support-requests?xtream_username=usuario123&installation_id=UUID-DO-DISPOSITIVO`
-- **Headers:** 
+**Estrutura JSON - Pedido de Canal:**
+```json
+{
+  "request_type": "content_request",
+  "category": "channel",
+  "content_name": "Globo RJ HD",
+  "xtream_username": "usuario_teste",
+  "installation_id": "UUID-UNICO"
+}
+```
+
+**Estrutura JSON - Reportar Problema:**
+```json
+{
+  "request_type": "problem_report",
+  "category": "movie",
+  "content_name": "Batman",
+  "description": "O filme está travando aos 20 minutos.",
+  "xtream_username": "usuario_teste",
+  "installation_id": "UUID-UNICO",
+  "content_id": "123"
+}
+```
+
+**Campos de Metadados:**
+- `content_id`: ID do conteúdo no provedor.
+- `series_id`: ID da série (para categorias series).
+- `season_number`: Número da temporada (inteiro).
+- `episode_id`: ID do episódio.
+- `episode_number`: Número do episódio (inteiro).
+
+**Respostas do POST:**
+- **Sucesso (201 Created):** `{"success": true, "id": "uuid-da-solicitacao"}`
+- **Duplicidade (409 Conflict):** `{"success": false, "error": "duplicate_request", "message": "Este pedido já foi realizado."}`
+- **Erro de Input (400 Bad Request):** Quando faltam campos obrigatórios ou o JSON é inválido.
+- **Erro Interno (500 Internal Server Error):** Falha no banco de dados.
+
+---
+
+### B. Consultar Histórico de Pedidos (GET)
+- **Endpoint:** `GET /api/public/support-requests?xtream_username=usuario123&installation_id=UUID-UNICO`
+- **Método:** `GET`
+- **Headers Obrigatórios:**
   - `apikey: sb_publishable_8FzvfK5WftTxhf3kZOI6Tg_FhLigKcT`
-  - `Authorization: Bearer <device_token>` (Token obtido na ativação)
-- **Retorno (200 OK):**
+  - `Authorization: Bearer <device_token>`
+- **Segurança:** O backend valida o `device_token` contra o `installation_id`. O usuário só consegue visualizar pedidos vinculados ao seu `xtream_username`.
+- **Identificação:** O `xtream_username` deve ser passado na Query String para filtro, mas a permissão de acesso é validada pelo Token Bearer.
+
+**Resposta de Sucesso (200 OK):**
 ```json
 {
   "success": true,
@@ -75,23 +112,20 @@ Retorna os pedidos feitos pelo usuário atual.
 
 ---
 
-## 3. Mapeamento de Status (UI do App)
+## 3. Tabela de Status e Erros
 
-| Status no Backend | Label Sugerida |
-| :--- | :--- |
-| `new` | Novo |
-| `in_review` | Em análise |
-| `added` | Adicionado |
-| `completed` | Concluído |
-| `unavailable` | Não disponível |
+| Código HTTP | Significado | Contexto |
+| :--- | :--- | :--- |
+| **200/201** | OK | Sucesso na operação. |
+| **400** | Bad Request | JSON inválido ou campos mal formatados. |
+| **401** | Unauthorized | Token Bearer ausente ou mal formado. |
+| **403** | Forbidden | Token de dispositivo inválido para o installation_id informado. |
+| **409** | Conflict | Pedido duplicado (mesmo usuário + mesmo conteúdo + status ativo). |
+| **500** | Server Error | Erro inesperado no servidor. |
 
----
-
-## 4. Campos Adicionados (Banco de Dados)
-Tabela: `support_requests`
-- `xtream_username` (text)
-- `content_id` (text)
-- `series_id` (text)
-- `season_number` (int4)
-- `episode_id` (text)
-- `episode_number` (int4)
+**Valores possíveis de `status`:**
+- `new`: Novo pedido recebido.
+- `in_review`: Em análise pela equipe.
+- `added`: Conteúdo adicionado ao sistema.
+- `completed`: Solicitação finalizada.
+- `unavailable`: Conteúdo não encontrado ou indisponível.
