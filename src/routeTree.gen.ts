@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TrailersRouteImport } from './routes/trailers'
 import { Route as SolicitacoesRouteImport } from './routes/solicitacoes'
 import { Route as ListasRouteImport } from './routes/listas'
 import { Route as HistoricoRouteImport } from './routes/historico'
@@ -27,6 +28,11 @@ import { Route as ApiPublicDeviceRegisterRouteImport } from './routes/api/public
 import { Route as ApiPublicDevicePollRouteImport } from './routes/api/public/device/poll'
 import { Route as ApiPublicDeviceCheckRouteImport } from './routes/api/public/device/check'
 
+const TrailersRoute = TrailersRouteImport.update({
+  id: '/trailers',
+  path: '/trailers',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SolicitacoesRoute = SolicitacoesRouteImport.update({
   id: '/solicitacoes',
   path: '/solicitacoes',
@@ -127,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/historico': typeof HistoricoRoute
   '/listas': typeof ListasRoute
   '/solicitacoes': typeof SolicitacoesRoute
+  '/trailers': typeof TrailersRoute
   '/api/public/submit-support-request': typeof ApiPublicSubmitSupportRequestRoute
   '/api/public/support-requests': typeof ApiPublicSupportRequestsRoute
   '/api/public/trailers': typeof ApiPublicTrailersRoute
@@ -146,6 +153,7 @@ export interface FileRoutesByTo {
   '/historico': typeof HistoricoRoute
   '/listas': typeof ListasRoute
   '/solicitacoes': typeof SolicitacoesRoute
+  '/trailers': typeof TrailersRoute
   '/api/public/submit-support-request': typeof ApiPublicSubmitSupportRequestRoute
   '/api/public/support-requests': typeof ApiPublicSupportRequestsRoute
   '/api/public/trailers': typeof ApiPublicTrailersRoute
@@ -166,6 +174,7 @@ export interface FileRoutesById {
   '/historico': typeof HistoricoRoute
   '/listas': typeof ListasRoute
   '/solicitacoes': typeof SolicitacoesRoute
+  '/trailers': typeof TrailersRoute
   '/api/public/submit-support-request': typeof ApiPublicSubmitSupportRequestRoute
   '/api/public/support-requests': typeof ApiPublicSupportRequestsRoute
   '/api/public/trailers': typeof ApiPublicTrailersRoute
@@ -187,6 +196,7 @@ export interface FileRouteTypes {
     | '/historico'
     | '/listas'
     | '/solicitacoes'
+    | '/trailers'
     | '/api/public/submit-support-request'
     | '/api/public/support-requests'
     | '/api/public/trailers'
@@ -206,6 +216,7 @@ export interface FileRouteTypes {
     | '/historico'
     | '/listas'
     | '/solicitacoes'
+    | '/trailers'
     | '/api/public/submit-support-request'
     | '/api/public/support-requests'
     | '/api/public/trailers'
@@ -225,6 +236,7 @@ export interface FileRouteTypes {
     | '/historico'
     | '/listas'
     | '/solicitacoes'
+    | '/trailers'
     | '/api/public/submit-support-request'
     | '/api/public/support-requests'
     | '/api/public/trailers'
@@ -245,6 +257,7 @@ export interface RootRouteChildren {
   HistoricoRoute: typeof HistoricoRoute
   ListasRoute: typeof ListasRoute
   SolicitacoesRoute: typeof SolicitacoesRoute
+  TrailersRoute: typeof TrailersRoute
   ApiPublicSubmitSupportRequestRoute: typeof ApiPublicSubmitSupportRequestRoute
   ApiPublicSupportRequestsRoute: typeof ApiPublicSupportRequestsRoute
   ApiPublicTrailersRoute: typeof ApiPublicTrailersRoute
@@ -256,6 +269,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/trailers': {
+      id: '/trailers'
+      path: '/trailers'
+      fullPath: '/trailers'
+      preLoaderRoute: typeof TrailersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/solicitacoes': {
       id: '/solicitacoes'
       path: '/solicitacoes'
@@ -389,6 +409,7 @@ const rootRouteChildren: RootRouteChildren = {
   HistoricoRoute: HistoricoRoute,
   ListasRoute: ListasRoute,
   SolicitacoesRoute: SolicitacoesRoute,
+  TrailersRoute: TrailersRoute,
   ApiPublicSubmitSupportRequestRoute: ApiPublicSubmitSupportRequestRoute,
   ApiPublicSupportRequestsRoute: ApiPublicSupportRequestsRoute,
   ApiPublicTrailersRoute: ApiPublicTrailersRoute,
