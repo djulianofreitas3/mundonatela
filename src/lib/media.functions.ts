@@ -244,26 +244,13 @@ export const runCatalogSyncBatch = createServerFn({ method: "POST" })
         if (toCreate.length > 0) {
           const { data: created, error: createError } = await supabaseAdmin
             .from("media_catalog")
-            .upsert(toCreate, { onConflict: "normalized_title,year,media_type", ignoreDuplicates: true })
+            .insert(toCreate)
             .select("id, normalized_title, year, media_type");
           if (createError) throw createError;
           for (const row of created ?? []) {
             index.set(keyOf(row.normalized_title, row.year, row.media_type), row.id);
           }
 
-          // Re-read anything the upsert skipped due to a concurrent insert.
-          const missing = toCreate
-            .map((row) => row["normalized_title"] as string)
-            .filter((title) => !Array.from(index.keys()).some((key) => key.startsWith(`${title}::`)));
-          if (missing.length > 0) {
-            const { data: refetched } = await supabaseAdmin
-              .from("media_catalog")
-              .select("id, normalized_title, year, media_type")
-              .in("normalized_title", missing);
-            for (const row of refetched ?? []) {
-              index.set(keyOf(row.normalized_title, row.year, row.media_type), row.id);
-            }
-          }
         }
 
         // 3. Link this source's stream ids to the central entries.
