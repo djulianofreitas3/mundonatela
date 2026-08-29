@@ -91,7 +91,7 @@ function Auth() {
         </form>
 
         <div className="mt-6 text-center text-xs text-muted-foreground">
-          &copy; {new Date().getFullYear()} IPTV Admin System. Acesso Restrito.
+          &copy; {new Date().getFullYear()} IPTV Acesso Restrito.
         </div>
       </div>
     </div>
