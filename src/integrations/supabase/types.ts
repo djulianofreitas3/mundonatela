@@ -288,6 +288,167 @@ export type Database = {
           },
         ]
       }
+      media_catalog: {
+        Row: {
+          backdrop_url: string | null
+          created_at: string
+          id: string
+          imdb_id: string | null
+          last_checked_at: string | null
+          media_type: string
+          normalized_title: string
+          overview: string | null
+          poster_url: string | null
+          title: string
+          tmdb_id: string | null
+          trailer_status: string
+          trailer_url: string | null
+          updated_at: string
+          year: number | null
+          youtube_trailer_id: string | null
+        }
+        Insert: {
+          backdrop_url?: string | null
+          created_at?: string
+          id?: string
+          imdb_id?: string | null
+          last_checked_at?: string | null
+          media_type: string
+          normalized_title: string
+          overview?: string | null
+          poster_url?: string | null
+          title: string
+          tmdb_id?: string | null
+          trailer_status?: string
+          trailer_url?: string | null
+          updated_at?: string
+          year?: number | null
+          youtube_trailer_id?: string | null
+        }
+        Update: {
+          backdrop_url?: string | null
+          created_at?: string
+          id?: string
+          imdb_id?: string | null
+          last_checked_at?: string | null
+          media_type?: string
+          normalized_title?: string
+          overview?: string | null
+          poster_url?: string | null
+          title?: string
+          tmdb_id?: string | null
+          trailer_status?: string
+          trailer_url?: string | null
+          updated_at?: string
+          year?: number | null
+          youtube_trailer_id?: string | null
+        }
+        Relationships: []
+      }
+      media_source_items: {
+        Row: {
+          created_at: string
+          id: string
+          lista_id: string
+          media_catalog_id: string | null
+          media_type: string
+          normalized_title: string
+          original_name: string
+          stream_id: string
+          updated_at: string
+          year: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lista_id: string
+          media_catalog_id?: string | null
+          media_type: string
+          normalized_title: string
+          original_name: string
+          stream_id: string
+          updated_at?: string
+          year?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lista_id?: string
+          media_catalog_id?: string | null
+          media_type?: string
+          normalized_title?: string
+          original_name?: string
+          stream_id?: string
+          updated_at?: string
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "media_source_items_lista_id_fkey"
+            columns: ["lista_id"]
+            isOneToOne: false
+            referencedRelation: "listas_iptv"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "media_source_items_media_catalog_id_fkey"
+            columns: ["media_catalog_id"]
+            isOneToOne: false
+            referencedRelation: "media_catalog"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      media_sync_jobs: {
+        Row: {
+          created_at: string
+          cursor_offset: number
+          error_message: string | null
+          finished_at: string | null
+          id: string
+          lista_id: string
+          processed_count: number
+          started_at: string | null
+          status: string
+          total_count: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cursor_offset?: number
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          lista_id: string
+          processed_count?: number
+          started_at?: string | null
+          status?: string
+          total_count?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cursor_offset?: number
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          lista_id?: string
+          processed_count?: number
+          started_at?: string | null
+          status?: string
+          total_count?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "media_sync_jobs_lista_id_fkey"
+            columns: ["lista_id"]
+            isOneToOne: false
+            referencedRelation: "listas_iptv"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string | null
