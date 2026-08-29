@@ -19,6 +19,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AtivacoesRouteImport } from './routes/ativacoes'
 import { Route as AdminsRouteImport } from './routes/admins'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiPublicTrailersRouteImport } from './routes/api/public/trailers'
 import { Route as ApiPublicSupportRequestsRouteImport } from './routes/api/public/support-requests'
 import { Route as ApiPublicSubmitSupportRequestRouteImport } from './routes/api/public/submit-support-request'
 import { Route as ApiPublicDeviceRequestCodeRouteImport } from './routes/api/public/device/request-code'
@@ -76,6 +77,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicTrailersRoute = ApiPublicTrailersRouteImport.update({
+  id: '/api/public/trailers',
+  path: '/api/public/trailers',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicSupportRequestsRoute =
   ApiPublicSupportRequestsRouteImport.update({
     id: '/api/public/support-requests',
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/solicitacoes': typeof SolicitacoesRoute
   '/api/public/submit-support-request': typeof ApiPublicSubmitSupportRequestRoute
   '/api/public/support-requests': typeof ApiPublicSupportRequestsRoute
+  '/api/public/trailers': typeof ApiPublicTrailersRoute
   '/api/public/device/check': typeof ApiPublicDeviceCheckRoute
   '/api/public/device/poll': typeof ApiPublicDevicePollRoute
   '/api/public/device/register': typeof ApiPublicDeviceRegisterRoute
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/solicitacoes': typeof SolicitacoesRoute
   '/api/public/submit-support-request': typeof ApiPublicSubmitSupportRequestRoute
   '/api/public/support-requests': typeof ApiPublicSupportRequestsRoute
+  '/api/public/trailers': typeof ApiPublicTrailersRoute
   '/api/public/device/check': typeof ApiPublicDeviceCheckRoute
   '/api/public/device/poll': typeof ApiPublicDevicePollRoute
   '/api/public/device/register': typeof ApiPublicDeviceRegisterRoute
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   '/solicitacoes': typeof SolicitacoesRoute
   '/api/public/submit-support-request': typeof ApiPublicSubmitSupportRequestRoute
   '/api/public/support-requests': typeof ApiPublicSupportRequestsRoute
+  '/api/public/trailers': typeof ApiPublicTrailersRoute
   '/api/public/device/check': typeof ApiPublicDeviceCheckRoute
   '/api/public/device/poll': typeof ApiPublicDevicePollRoute
   '/api/public/device/register': typeof ApiPublicDeviceRegisterRoute
@@ -180,6 +189,7 @@ export interface FileRouteTypes {
     | '/solicitacoes'
     | '/api/public/submit-support-request'
     | '/api/public/support-requests'
+    | '/api/public/trailers'
     | '/api/public/device/check'
     | '/api/public/device/poll'
     | '/api/public/device/register'
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/solicitacoes'
     | '/api/public/submit-support-request'
     | '/api/public/support-requests'
+    | '/api/public/trailers'
     | '/api/public/device/check'
     | '/api/public/device/poll'
     | '/api/public/device/register'
@@ -216,6 +227,7 @@ export interface FileRouteTypes {
     | '/solicitacoes'
     | '/api/public/submit-support-request'
     | '/api/public/support-requests'
+    | '/api/public/trailers'
     | '/api/public/device/check'
     | '/api/public/device/poll'
     | '/api/public/device/register'
@@ -235,6 +247,7 @@ export interface RootRouteChildren {
   SolicitacoesRoute: typeof SolicitacoesRoute
   ApiPublicSubmitSupportRequestRoute: typeof ApiPublicSubmitSupportRequestRoute
   ApiPublicSupportRequestsRoute: typeof ApiPublicSupportRequestsRoute
+  ApiPublicTrailersRoute: typeof ApiPublicTrailersRoute
   ApiPublicDeviceCheckRoute: typeof ApiPublicDeviceCheckRoute
   ApiPublicDevicePollRoute: typeof ApiPublicDevicePollRoute
   ApiPublicDeviceRegisterRoute: typeof ApiPublicDeviceRegisterRoute
@@ -313,6 +326,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/trailers': {
+      id: '/api/public/trailers'
+      path: '/api/public/trailers'
+      fullPath: '/api/public/trailers'
+      preLoaderRoute: typeof ApiPublicTrailersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/support-requests': {
       id: '/api/public/support-requests'
       path: '/api/public/support-requests'
@@ -371,6 +391,7 @@ const rootRouteChildren: RootRouteChildren = {
   SolicitacoesRoute: SolicitacoesRoute,
   ApiPublicSubmitSupportRequestRoute: ApiPublicSubmitSupportRequestRoute,
   ApiPublicSupportRequestsRoute: ApiPublicSupportRequestsRoute,
+  ApiPublicTrailersRoute: ApiPublicTrailersRoute,
   ApiPublicDeviceCheckRoute: ApiPublicDeviceCheckRoute,
   ApiPublicDevicePollRoute: ApiPublicDevicePollRoute,
   ApiPublicDeviceRegisterRoute: ApiPublicDeviceRegisterRoute,
