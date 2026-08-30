@@ -300,7 +300,7 @@ export type Database = {
           overview: string | null
           poster_url: string | null
           title: string
-          tmdb_id: string | null
+          tmdb_id: number | null
           trailer_status: string
           trailer_url: string | null
           updated_at: string
@@ -318,7 +318,7 @@ export type Database = {
           overview?: string | null
           poster_url?: string | null
           title: string
-          tmdb_id?: string | null
+          tmdb_id?: number | null
           trailer_status?: string
           trailer_url?: string | null
           updated_at?: string
@@ -336,7 +336,7 @@ export type Database = {
           overview?: string | null
           poster_url?: string | null
           title?: string
-          tmdb_id?: string | null
+          tmdb_id?: number | null
           trailer_status?: string
           trailer_url?: string | null
           updated_at?: string
@@ -395,56 +395,6 @@ export type Database = {
             columns: ["media_catalog_id"]
             isOneToOne: false
             referencedRelation: "media_catalog"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      media_sync_jobs: {
-        Row: {
-          created_at: string
-          cursor_offset: number
-          error_message: string | null
-          finished_at: string | null
-          id: string
-          lista_id: string
-          processed_count: number
-          started_at: string | null
-          status: string
-          total_count: number
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          cursor_offset?: number
-          error_message?: string | null
-          finished_at?: string | null
-          id?: string
-          lista_id: string
-          processed_count?: number
-          started_at?: string | null
-          status?: string
-          total_count?: number
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          cursor_offset?: number
-          error_message?: string | null
-          finished_at?: string | null
-          id?: string
-          lista_id?: string
-          processed_count?: number
-          started_at?: string | null
-          status?: string
-          total_count?: number
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "media_sync_jobs_lista_id_fkey"
-            columns: ["lista_id"]
-            isOneToOne: false
-            referencedRelation: "listas_iptv"
             referencedColumns: ["id"]
           },
         ]
